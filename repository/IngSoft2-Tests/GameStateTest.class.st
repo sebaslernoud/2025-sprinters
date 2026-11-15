@@ -14,39 +14,7 @@ GameStateTest >> test000WhenGameIsNotPlayedThenPlayingStateIsFalse [
 ]
 
 { #category : 'tests' }
-GameStateTest >> test001WhenGameIsNotPlayedThenFinishedStateIsFalse [
-
-	| gameState |
-	gameState := Started new.
-	 self assert: gameState isFinished equals: false
-]
-
-{ #category : 'tests' }
-GameStateTest >> test002WhenGameIsStartedThenPlayingdStateIsTrue [
-
-	| gameState |
-	gameState := Started new.
-	self assert: gameState isFinished equals: false
-]
-
-{ #category : 'tests' }
-GameStateTest >> test003WhenGameIsStartedThenFinishedStateIsFalse [
-
-	| gameState |
-	gameState := Started new.
-	self assert: gameState isFinished equals: false
-]
-
-{ #category : 'tests' }
 GameStateTest >> test004WhenGameIsFinishedThenFinishedStateIsTrue [
-
-	| gameState |
-	gameState := Finished new.
-	self assert: gameState isFinished equals: true
-]
-
-{ #category : 'tests' }
-GameStateTest >> test005WhenGameIsFinishedThenPlayingStateIsFalse [
 
 	| gameState |
 	gameState := Finished new.

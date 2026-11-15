@@ -1,3 +1,7 @@
+"
+Soy un CardManager determinista para los tests, no formo parte del modelo del juego.
+Reparto las cartas en el orden en que se agregaron al mazo con addCardsToDeck:.
+"
 Class {
 	#name : 'FixCardManager',
 	#superclass : 'CardManager',

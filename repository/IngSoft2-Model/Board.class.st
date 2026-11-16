@@ -43,17 +43,6 @@ Board >> amountOfCellsOf: anEffectOrClass [
 ]
 
 { #category : 'as yet unclassified' }
-Board >> calculatePosition: aPosition moving: parsecs [
-
-	| parsecsInCell currentParsec newParsecPos newPosition |
-	parsecsInCell := self parsecsPerCell.
-	currentParsec := aPosition * parsecsInCell.
-	newParsecPos := currentParsec + parsecs.
-	newPosition := (newParsecPos / parsecsInCell) ceiling.
-	^ newPosition
-]
-
-{ #category : 'as yet unclassified' }
 Board >> calculatePositionByParsecs: parsecs [
 
 	| parsecsInCell newPosition |
@@ -95,11 +84,6 @@ Board >> initializeWith: aAmountOfCells and: aWormHole has: distributions basedO
 Board >> laps [
 
 	^ laps
-]
-
-{ #category : 'convertion' }
-Board >> lightYearsPerCell [
-	^ (self parsecsPerCell) * 3.
 ]
 
 { #category : 'as yet unclassified' }

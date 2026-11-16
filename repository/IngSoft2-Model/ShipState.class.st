@@ -139,18 +139,6 @@ ShipState >> reduceTurnsToSkip [
 ]
 
 { #category : 'removing' }
-ShipState >> removeACard: aCard [
-
-	| cardToRemove |
-	cardToRemove := cards detect: [ :card | card matches: aCard ].
-
-	cards
-		remove: cardToRemove
-		ifAbsent: [
-		Error signal: 'Tried to remove a card that is not in hand' ]
-]
-
-{ #category : 'removing' }
 ShipState >> removeCard: aCard [
 
 	cards remove: aCard

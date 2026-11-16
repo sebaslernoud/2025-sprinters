@@ -37,20 +37,6 @@ CardManager >> applyRedoEffectOn: aShip in: aGame [
 ]
 
 { #category : 'as yet unclassified' }
-CardManager >> applyTo: aShip using: aShip2 in: aGame [
-
-	| realCard |
-    discardPile isEmpty ifTrue: [
-        ^ Error signal: 'There are no cards played before.'
-    ].
-    realCard := discardPile reversed
-        detect: [ :card | card isRedo not ]
-        ifNone: [ ^ Error signal: 'No real card to redo.' ].
-
-    realCard applyTo: aShip using: aShip in: aGame.
-]
-
-{ #category : 'as yet unclassified' }
 CardManager >> cancelCard: aCard [
 
 	| card |
@@ -99,13 +85,6 @@ CardManager >> drawInitialCardsFor: aShip [
 	| card |
 	self drawCardOn: aShip.
 	self drawCardOn: aShip
-]
-
-{ #category : 'as yet unclassified' }
-CardManager >> ensureHasEnoughCardsForShips: shipCount [
-
-	deck size >= (shipCount * 2) ifFalse: [
-		Error signal: 'Not enough cards to give 2 to each ship.' ]
 ]
 
 { #category : 'testing' }

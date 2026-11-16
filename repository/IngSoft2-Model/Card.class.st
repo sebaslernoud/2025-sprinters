@@ -5,14 +5,6 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'generators' }
-Card >> generateRandomCard [
-
-	| classes |
-	classes := self class subclasses.
-	^ (classes at: (Random new nextIntegerBetween: 1 and: classes size)) new. 
-]
-
 { #category : 'testing' }
 Card >> isCancellationCard [
 

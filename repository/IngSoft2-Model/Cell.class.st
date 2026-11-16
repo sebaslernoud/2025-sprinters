@@ -25,11 +25,6 @@ Cell >> effect: aCellClass [
 	cellClass := aCellClass.
 ]
 
-{ #category : 'playing' }
-Cell >> effectOnMovement [
-	^ cellClass effectOnMovement
-]
-
 { #category : 'initialization' }
 Cell >> initializeWith: aCellClass [
 

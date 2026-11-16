@@ -5,22 +5,10 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'testing' }
-Finished >> isFinished [
-
-	^ true
-]
-
-{ #category : 'testing' }
-Finished >> isPlaying [
-
-	^ false
-]
-
 { #category : 'playing' }
-Finished >> markAsPlaying [
+Finished >> keepPlaying: aGame [
 
-	^ false
+	^ self
 ]
 
 { #category : 'playing' }
@@ -28,6 +16,25 @@ Finished >> play: aGame [
 
 	^ Error signal:
 		  'The game has already been played, you can not play any more.'
+]
+
+{ #category : 'playing' }
+Finished >> playTurnOf: aGame [
+
+	^ Error signal:
+		  'The game has already been played, you can not play any more.'
+]
+
+{ #category : 'playing' }
+Finished >> rankingOf: aGame [
+
+	^ aGame topShipNames
+]
+
+{ #category : 'playing' }
+Finished >> ship: shipName useCard: aCard with: anotherShipName in: aGame [
+
+	^ Error signal: 'Cards can not be played once the game has finished'
 ]
 
 { #category : 'playing' }

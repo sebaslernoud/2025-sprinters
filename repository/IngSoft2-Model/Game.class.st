@@ -69,12 +69,6 @@ Game >> cardManager [
 ]
 
 { #category : 'accessing' }
-Game >> currentStatus [
-
-	^ status
-]
-
-{ #category : 'accessing' }
 Game >> currentTopPlayer [
 
 	^ self shipsSortedByPosition at: 1.
@@ -98,12 +92,18 @@ Game >> initializeWith: aBoard using: diceBucket andShipsNamed: shipsname until:
 	board := aBoard with: laps.
 	ships := shipsname collect: [ :ship | Ship create: ship ].
 	bucketOfDices := diceBucket.
-	status := Started creation.
+	status := Started new.
 	turnManager := TurnManager with: ships.
 	battleManager := BattleManager with: diceBucket.
 	effectManager := EffectManager creation.
 	cardManager := aCardManager.
 	ships do: [ :ship | cardManager drawInitialCardsFor: ship ]
+]
+
+{ #category : 'playing' }
+Game >> keepPlaying [
+
+	status keepPlaying: self
 ]
 
 { #category : 'playing' }
@@ -115,31 +115,38 @@ Game >> play [
 ]
 
 { #category : 'playing' }
-Game >> playTurn [
+Game >> playNextTurn [
 
 	| currentShip rolledDistance boardEffect |
 	currentShip := turnManager nextShip.
 	rolledDistance := bucketOfDices rollFor: currentShip.
 	currentShip move: rolledDistance in: board.
-
 	boardEffect := board effectOnPosition: currentShip position.
 	effectManager apply: boardEffect to: currentShip in: self.
 	battleManager resolveIfNeededAt: currentShip in: self.
-
 	self someShipWon
+]
+
+{ #category : 'playing' }
+Game >> playTurn [
+
+	status playTurnOf: self
+]
+
+{ #category : 'as yet unclassified' }
+Game >> resolveShipNamed: shipName useCard: aCard with: anotherShipName [
+
+	cardManager
+		playCard: aCard
+		by: (self findShipBy: shipName)
+		target: (self findShipBy: anotherShipName)
+		in: self
 ]
 
 { #category : 'playing' }
 Game >> shipNamed: shipName useCard: aCard with: anotherShipName [
 
-	| ship anotherShip |
-	ship := self findShipBy: shipName.
-	anotherShip := self findShipBy: anotherShipName.
-	cardManager
-		playCard: aCard
-		by: ship
-		target: anotherShip
-		in: self
+	status ship: shipName useCard: aCard with: anotherShipName in: self
 ]
 
 { #category : 'accessing' }
@@ -156,11 +163,7 @@ Game >> shipsSortedByPosition [
 { #category : 'accessing' }
 Game >> showRanking [
 
-	status isFinished ifFalse: [
-		^ Error signal:
-			  'The Game has not been played yet so it doesn`t have a ranking' ].
-	^ ((self shipsSortedByPosition first: (3 min: ships size)) collect: [
-		   :ship | ship name ]) asOrderedCollection
+	^ status rankingOf: self
 ]
 
 { #category : 'playing' }
@@ -188,4 +191,11 @@ Game >> someShipWon [
 
 	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [
 		status := Finished new ]
+]
+
+{ #category : 'playing' }
+Game >> topShipNames [
+
+	^ ((self shipsSortedByPosition first: (3 min: ships size)) collect: [
+		   :ship | ship name ]) asOrderedCollection
 ]

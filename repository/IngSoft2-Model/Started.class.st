@@ -1,46 +1,40 @@
 Class {
 	#name : 'Started',
 	#superclass : 'Object',
-	#instVars : [
-		'playing'
-	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'accessing' }
-Started class >> creation [
+{ #category : 'playing' }
+Started >> keepPlaying: aGame [
 
-	^ self new initialization
-]
-
-{ #category : 'initialization' }
-Started >> initialization [
-
-	playing := false
-]
-
-{ #category : 'testing' }
-Started >> isFinished [
-
-	^ false
-]
-
-{ #category : 'testing' }
-Started >> isPlaying [
-
-	^ playing
+	aGame playTurn.
+	aGame keepPlaying
 ]
 
 { #category : 'playing' }
-Started >> markAsPlaying [
+Started >> play: aGame [
 
-	playing := true
+	aGame keepPlaying
 ]
 
 { #category : 'playing' }
-Started >> play:aGame [
-	 [aGame currentStatus isFinished ] whileFalse: [ aGame playTurn ].
+Started >> playTurnOf: aGame [
+
+	aGame playNextTurn
+]
+
+{ #category : 'playing' }
+Started >> rankingOf: aGame [
+
+	^ Error signal:
+		  'The Game has not been played yet so it doesn`t have a ranking'
+]
+
+{ #category : 'playing' }
+Started >> ship: shipName useCard: aCard with: anotherShipName in: aGame [
+
+	aGame resolveShipNamed: shipName useCard: aCard with: anotherShipName
 ]
 
 { #category : 'playing' }

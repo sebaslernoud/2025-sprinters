@@ -133,7 +133,7 @@ GameTest >> test009WhenGameHasPlayedWithLoadedDiceThenShowShipSortedByPositionRe
 	| aGame |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
-		         diceSequence: #( 10 7 20 );
+		         diceSequence: #( 3 5 7 );
 		         build.
 	aGame playTurn.
 	aGame playTurn.

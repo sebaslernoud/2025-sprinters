@@ -6,22 +6,6 @@ Class {
 }
 
 { #category : 'tests' }
-GameStateTest >> test000WhenGameIsNotPlayedThenPlayingStateIsFalse [
-
-	| gameState |
-	gameState := Started new.
-	 self assert: gameState isFinished equals: false
-]
-
-{ #category : 'tests' }
-GameStateTest >> test004WhenGameIsFinishedThenFinishedStateIsTrue [
-
-	| gameState |
-	gameState := Finished new.
-	self assert: gameState isFinished equals: true
-]
-
-{ #category : 'tests' }
 GameStateTest >> test007WhenGameIsFinishedAndAskForWinnerThenReturnWinner [
 
 	| aGame |
@@ -57,4 +41,57 @@ GameStateTest >> test009WhenGamePlaysOneTurnThenOnlyTheShipInTurnMoves [
 	aGame playTurn.
 	self assert: (aGame findShipBy: 'ship 1') position equals: 6.
 	self assert: (aGame findShipBy: 'ship 2') position equals: 1
+]
+
+{ #category : 'tests' }
+GameStateTest >> test010WhenGameHasFinishedThenPlayAgainRaiseError [
+
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 10 );
+		         build.
+	aGame play.
+	self
+		should: [ aGame play ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'The game has already been played, you can not play any more.' ]
+]
+
+{ #category : 'tests' }
+GameStateTest >> test011WhenGameHasFinishedThenPlayTurnRaiseError [
+
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 10 );
+		         build.
+	aGame play.
+	self
+		should: [ aGame playTurn ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'The game has already been played, you can not play any more.' ]
+]
+
+{ #category : 'tests' }
+GameStateTest >> test012WhenGameHasFinishedThenCardsCanNotBePlayed [
+
+	| aGame speedCard |
+	speedCard := SpeedCard new.
+	aGame := GameBuilder new
+		         diceSequence: #( 10 );
+		         deck: { speedCard. SpeedCard new };
+		         build.
+	aGame play.
+	self
+		should: [ aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1' ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'Cards can not be played once the game has finished' ]
 ]

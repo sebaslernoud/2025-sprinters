@@ -3,8 +3,7 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'ships',
-		'turn',
-		'currentTurnIndex'
+		'turn'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'

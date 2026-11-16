@@ -1,9 +1,6 @@
 Class {
 	#name : 'CardGiver',
 	#superclass : 'Effect',
-	#instVars : [
-		'card'
-	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }

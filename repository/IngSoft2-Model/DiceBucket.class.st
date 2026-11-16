@@ -21,12 +21,7 @@ DiceBucket >> initializeWith: aSetOfDices [
 { #category : 'as yet unclassified' }
 DiceBucket >> rollFor: aShip [
 
-	| total baseRoll modifiers dicesResult |
-	dicesResult := self throw.
-	modifiers := aShip bonusThrow.
-
-	total := dicesResult + modifiers.
-	^ total
+	^ self throw + aShip bonusThrow
 ]
 
 { #category : 'playing' }

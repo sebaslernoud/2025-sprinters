@@ -82,7 +82,6 @@ CardManager >> drawCardOn: aShip [
 { #category : 'as yet unclassified' }
 CardManager >> drawInitialCardsFor: aShip [
 
-	| card |
 	self drawCardOn: aShip.
 	self drawCardOn: aShip
 ]

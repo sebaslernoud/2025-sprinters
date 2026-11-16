@@ -103,7 +103,7 @@ ShipTest >> test005WhenShip1Moves12CellsInABoardWith5CellsThenShip1Has2Laps [
 { #category : 'tests' }
 ShipTest >> test006WhenShip1IsInFinalLapThenWinnerIsShip1 [
 
-	| ship1 ships laps aGame aDice dices aDiceBucket amountOfCells aWorm distributions aBoard typesOfCards cardManager |
+	| ship1 ships laps aGame aDice dices aDiceBucket amountOfCells aWorm distributions aBoard cardManager |
 	ships := OrderedCollection new.
 	dices := OrderedCollection new.
 	ship1 := 'Ship1'.
@@ -236,7 +236,7 @@ ShipTest >> test014WhenShipHas2TurnToSkipAndHAsSkipped1TurnThenItHas1TurnToSkip 
 { #category : 'tests' }
 ShipTest >> test015WhenShipIsInPosition5AndReceiveBlackHoleEffectThenPositionIs1 [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame typesOfCards cardManager |
+	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
 	ships := OrderedCollection new.
 	dices := OrderedCollection new.
 	aDice := LoadedDice withSequence: #( 6 ).
@@ -262,13 +262,13 @@ ShipTest >> test015WhenShipIsInPosition5AndReceiveBlackHoleEffectThenPositionIs1
 		         cardManager: cardManager.
 
 	aGame playTurn.
-	self assert: (aGame ships at: 1) position equals: 3
+	self assert: (aGame ships first) position equals: 3
 ]
 
 { #category : 'tests' }
 ShipTest >> test016WhenShipChoiceToNotPlayThenShipRecoverShield [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame typesOfCards cardManager |
+	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
 	ships := OrderedCollection new.
 	dices := OrderedCollection new.
 	aDice := LoadedDice withSequence: #( 5 3 ).
@@ -299,13 +299,13 @@ ShipTest >> test016WhenShipChoiceToNotPlayThenShipRecoverShield [
 	aGame playTurn.
 	aGame skipTurnForShipNamed: 'ship 1'.
 	aGame playTurn.
-	self assert: (aGame ships at: 1) shields equals: 3
+	self assert: (aGame ships first) shields equals: 3
 ]
 
 { #category : 'tests' }
 ShipTest >> test017WhenShipMovesMoreCellsThanCellsInBoardThenItActualPositionIs1 [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame typesOfCards cardManager |
+	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
 	ships := OrderedCollection new.
 	dices := OrderedCollection new.
 	aDice := LoadedDice withSequence: #( 10 ).
@@ -336,7 +336,7 @@ ShipTest >> test017WhenShipMovesMoreCellsThanCellsInBoardThenItActualPositionIs1
 { #category : 'tests' }
 ShipTest >> test018WhenShipMovesToLastCellInLapThanCellsInBoardThenItIsInLastCell [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame typesOfCards cardManager |
+	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
 	ships := OrderedCollection new.
 	dices := OrderedCollection new.
 	aDice := LoadedDice withSequence: #( 9 ).
@@ -367,7 +367,7 @@ ShipTest >> test018WhenShipMovesToLastCellInLapThanCellsInBoardThenItIsInLastCel
 { #category : 'tests' }
 ShipTest >> test019WhenShipMovesByEffectAndItIsInEarlyCellsThenLapsStayZeroAndNoNegative [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame typesOfCards cardManager |
+	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
 	ships := OrderedCollection new.
 	dices := OrderedCollection new.
 	aDice := LoadedDice withSequence: #( 1 ).

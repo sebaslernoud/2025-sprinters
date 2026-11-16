@@ -114,7 +114,7 @@ BoardTest >> test004WhenCreateBoardWithCellsNotIntegerThenReturnsError [
 { #category : 'tests' }
 BoardTest >> test005WhenShipMovesToWormholeThenBoardKnowsThePositionOfShip [
 
-	| amountOfCells aX aY aWorm aBoard aShip distributions aLoadedDice aDiceBucket ships cardManager aGame dices |
+	| amountOfCells aX aY aWorm aBoard distributions aLoadedDice aDiceBucket ships cardManager aGame dices |
 	amountOfCells := 10.
 	aX := 4.
 	aY := 7.
@@ -260,46 +260,30 @@ BoardTest >> test010WhenCreateBoardWithDistributionsThenEffectsOFCellsISNoEFfect
 { #category : 'tests' }
 BoardTest >> test011WhenBoardIsCreatedThenEffectsAreDistributedAccordingToProbability [
 
-	| board amountOfCells worm distributions cardEffectCount blackHoleCount noEffectCount totalCells tolerance distanceToMove effect name hyperSpaceCount hyperJumpCount moonWalkCount atomicBombCount |
-	amountOfCells := 1000.
-	worm := Worm with: 2 and: 4.
-	distanceToMove := OrderedCollection new.
-	distanceToMove add: (Distance lightYear: 27).
-	distanceToMove add: (Distance lightYear: 18).
-	distanceToMove add: (Distance lightYear: 9).
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 0.38).
-	distributions add: (Distribution at: CardGiver with: 0.10).
-	distributions add: (Distribution at: BlackHole with: 0.20).
-	distributions add: (Distribution at: HyperSpaceJump with: 0.20).
-	distributions add: (Distribution at: MoonWalk with: 0.10).
-	distributions add:
-		(Distribution at: (HyperJump with: distanceToMove) with: 0.08).
-	distributions add: (Distribution at: AtomicBomb with: 0.02).
-
+	| board distributions tolerance cardGiverRatio blackHoleRatio noEffectRatio |
+	distributions := {
+		                 (Distribution at: NoEffect with: 0.38).
+		                 (Distribution at: CardGiver with: 0.10).
+		                 (Distribution at: BlackHole with: 0.20).
+		                 (Distribution at: HyperSpaceJump with: 0.20).
+		                 (Distribution at: MoonWalk with: 0.10).
+		                 (Distribution
+			                  at: (HyperJump with: {
+						                   (Distance lightYear: 27).
+						                   (Distance lightYear: 18).
+						                   (Distance lightYear: 9) })
+			                  with: 0.08).
+		                 (Distribution at: AtomicBomb with: 0.02) }.
 	board := Board
-		         with: amountOfCells
-		         and: worm
+		         with: 1000
+		         and: (Worm with: 2 and: 4)
 		         has: distributions
 		         basedOn: (Distance parsecs: 20).
-
-	cardEffectCount := board amountOfCellsOf: 'CardGiver' .
-	blackHoleCount := board  amountOfCellsOf: 'BlackHole' .
-	noEffectCount := board  amountOfCellsOf:  'NoEffect' .
-	hyperSpaceCount := board  amountOfCellsOf: 'HyperSpaceJump' .
-	hyperJumpCount := board  amountOfCellsOf: 'HyperJump' .
-	moonWalkCount := board  amountOfCellsOf:  'MoonWalk' .
-	atomicBombCount := board  amountOfCellsOf:  'AtomicBomb' .
-
-	totalCells := amountOfCells.
-	tolerance := 0.05. "5% de margen de error\"
-
-	self assert: cardEffectCount / totalCells >=( 0.10 - tolerance).
-	self assert: cardEffectCount / totalCells <= (0.10 + tolerance).
-
-	self assert: blackHoleCount / totalCells >= (0.20 - tolerance).
-	self assert: blackHoleCount / totalCells <= (0.20 + tolerance).
-
-	self assert: noEffectCount / totalCells >= (0.38 - tolerance).
-	self assert: noEffectCount / totalCells <= (0.38 + tolerance)
+	tolerance := 0.05. "5% de margen de error"
+	cardGiverRatio := (board amountOfCellsOf: 'CardGiver') / 1000.
+	blackHoleRatio := (board amountOfCellsOf: 'BlackHole') / 1000.
+	noEffectRatio := (board amountOfCellsOf: 'NoEffect') / 1000.
+	self assert: (cardGiverRatio between: 0.10 - tolerance and: 0.10 + tolerance).
+	self assert: (blackHoleRatio between: 0.20 - tolerance and: 0.20 + tolerance).
+	self assert: (noEffectRatio between: 0.38 - tolerance and: 0.38 + tolerance)
 ]

@@ -51,7 +51,7 @@ WormHoleTest >> test003WhenCreateWormHolesPositionNoIntegersThenReturnsError [
 { #category : 'tests' }
 WormHoleTest >> test004WhenShipMovesInsideWormholeThenPositionChanges [
 
-	| aWorm aX aY aPosition aBoard amountOfCells distributions laps ships cardManager aGame aDiceBucket ship1 |
+	| aWorm aX aY aPosition aBoard distributions laps ships cardManager aGame aDiceBucket ship1 |
 	aX := 2.
 	aY := 6.
 	aWorm := Worm with: aX and: aY.

@@ -2,13 +2,8 @@ Class {
 	#name : 'HyperJump',
 	#superclass : 'Effect',
 	#instVars : [
-		'parsecsToMove',
 		'index',
 		'distancesToMove'
-	],
-	#classInstVars : [
-		'parsecsToMove',
-		'index'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'

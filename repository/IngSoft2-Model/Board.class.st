@@ -6,7 +6,6 @@ Class {
 		'wormHole',
 		'laps',
 		'cells',
-		'totalParsecs',
 		'distance'
 	],
 	#category : 'IngSoft2-Model',
@@ -89,7 +88,7 @@ Board >> laps [
 { #category : 'as yet unclassified' }
 Board >> move: aDistance ship: aShip [
 
-	| parsecsInCell currentParsec newParsecPos newPosition currentLap position modPosition |
+	| newPosition currentLap position modPosition |
 	newPosition := aDistance <= 0
 		               ifTrue: [ 1 ]
 		               ifFalse: [ aDistance ].

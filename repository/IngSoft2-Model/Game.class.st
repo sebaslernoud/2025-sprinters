@@ -9,42 +9,31 @@ Class {
 		'turnManager',
 		'battleManager',
 		'cardManager',
-		'effectManager',
-		'winner'
+		'effectManager'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }
 
 { #category : 'as yet unclassified' }
-Game class >> validateUniqueNames: ships [
+Game class >> validateUniqueNames: shipNames [
 
-	| uniqueNames duplicatedNames |
-	uniqueNames := Set new.
-	duplicatedNames := OrderedCollection new.
-
-	ships do: [ :shipName |
-		(uniqueNames includes: shipName)
-			ifTrue: [ duplicatedNames add: shipName ]
-			ifFalse: [ uniqueNames add: shipName ] ].
-
-	duplicatedNames isEmpty ifFalse: [
+	shipNames asSet size = shipNames size ifFalse: [
 		^ Error signal: 'Ship´s name must not be reapeated.' ].
-
-	^ ships
+	^ shipNames
 ]
 
 { #category : 'as yet unclassified' }
-Game class >> with: arg1 using: arg2 andShipsNamed: arg3 until: arg4 cardManager: arg5 [
+Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames until: laps cardManager: aCardManager [
 
-	arg3 ifEmpty: [ ^ Error signal: 'List of ships must not be empty.' ].
-	self validateUniqueNames: arg3.
+	shipNames ifEmpty: [ ^ Error signal: 'List of ships must not be empty.' ].
+	self validateUniqueNames: shipNames.
 	^ self new
-		  initializeWith: arg1
-		  using: arg2
-		  andShipsNamed: arg3
-		  until: arg4
-		  cardManager: arg5
+		  initializeWith: aBoard
+		  using: aDiceBucket
+		  andShipsNamed: shipNames
+		  until: laps
+		  cardManager: aCardManager
 ]
 
 { #category : 'playing' }
@@ -106,7 +95,6 @@ Game >> findShipBy: aName [
 { #category : 'initialization' }
 Game >> initializeWith: aBoard using: diceBucket andShipsNamed: shipsname until: laps cardManager: aCardManager [
 
-	| tmp1 |
 	board := aBoard with: laps.
 	ships := shipsname collect: [ :ship | Ship create: ship ].
 	bucketOfDices := diceBucket.
@@ -168,20 +156,11 @@ Game >> shipsSortedByPosition [
 { #category : 'accessing' }
 Game >> showRanking [
 
-	| top ranking sorted |
-	status isFinished
-		ifTrue: [
-			top := 1.
-			ranking := OrderedCollection new.
-			sorted := self shipsSortedByPosition.
-
-			[ top <= 3 and: [ top <= sorted size ] ] whileTrue: [
-				ranking add: (sorted at: top) name.
-				top := top + 1 ].
-			^ ranking ]
-		ifFalse: [
-			Error signal:
-				'The Game has not been played yet so it doesn`t have a ranking' ]
+	status isFinished ifFalse: [
+		^ Error signal:
+			  'The Game has not been played yet so it doesn`t have a ranking' ].
+	^ ((self shipsSortedByPosition first: (3 min: ships size)) collect: [
+		   :ship | ship name ]) asOrderedCollection
 ]
 
 { #category : 'playing' }
@@ -207,8 +186,6 @@ Game >> skipTurnForShipNamed: shipName [
 { #category : 'playing' }
 Game >> someShipWon [
 
-	| laps winner result |
-	laps := board laps.
-	result := ships anySatisfy: [ :ship | ship winAt: board ].
-	result ifTrue: [ status := Finished new ]
+	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [
+		status := Finished new ]
 ]

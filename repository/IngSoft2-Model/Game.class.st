@@ -24,7 +24,7 @@ Game class >> validateUniqueNames: shipNames [
 ]
 
 { #category : 'as yet unclassified' }
-Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames until: laps cardManager: aCardManager [
+Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames cardManager: aCardManager [
 
 	shipNames ifEmpty: [ ^ Error signal: 'List of ships must not be empty.' ].
 	self validateUniqueNames: shipNames.
@@ -32,7 +32,6 @@ Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames until: la
 		  initializeWith: aBoard
 		  using: aDiceBucket
 		  andShipsNamed: shipNames
-		  until: laps
 		  cardManager: aCardManager
 ]
 
@@ -87,14 +86,14 @@ Game >> findShipBy: aName [
 ]
 
 { #category : 'initialization' }
-Game >> initializeWith: aBoard using: diceBucket andShipsNamed: shipsname until: laps cardManager: aCardManager [
+Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames cardManager: aCardManager [
 
-	board := aBoard with: laps.
-	ships := shipsname collect: [ :ship | Ship create: ship ].
-	bucketOfDices := diceBucket.
+	board := aBoard.
+	ships := shipNames collect: [ :shipName | Ship create: shipName ].
+	bucketOfDices := aDiceBucket.
 	status := Started new.
 	turnManager := TurnManager with: ships.
-	battleManager := BattleManager with: diceBucket.
+	battleManager := BattleManager with: aDiceBucket.
 	effectManager := EffectManager creation.
 	cardManager := aCardManager.
 	ships do: [ :ship | cardManager drawInitialCardsFor: ship ]

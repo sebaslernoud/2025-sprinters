@@ -18,19 +18,14 @@ ShipTest >> test000WhenCreateShipThenPositionEqualsOne [
 { #category : 'tests' }
 ShipTest >> test001WhenShipReceiveANumberThenMovesThatAmount [
 
-	| aLoadedDice ship1 aWorm distributions aBoard |
-	aLoadedDice := LoadedDice withSequence: #( 3 ).
-	ship1 := Ship create: 'Ship1'.
-	aWorm := Worm with: 1 and: 2.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
+	| aBoard ship1 |
 	aBoard := Board
-		          with: 5
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
+		          withEffects: (Array new: 5 withAll: NoEffect new)
+		          wormHole: (Worm with: 1 and: 2)
+		          laps: 1
+		          length: (Distance parsecs: 20).
+	ship1 := Ship create: 'Ship1'.
 	ship1 move: 3 in: aBoard.
-
 	self assert: ship1 position equals: 4
 ]
 
@@ -61,99 +56,58 @@ ShipTest >> test003WhenCreateAShipWithNameThatIsNotAStringThenRaiceError [
 { #category : 'tests' }
 ShipTest >> test004WhenShip1PositionIsLastOneAndThrow1ThenShip1StartFromTheBeginning [
 
-	| ship1 aCircularBoard dice amountOfCells aX aY aWorm distributions |
-	dice := LoadedDice withSequence: #( 4 1 ).
-	ship1 := Ship create: 'Ship1'.
-	amountOfCells := 4.
-	aX := 2.
-	aY := 3.
-	aWorm := Worm with: aX and: aY.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
+	| aCircularBoard ship1 |
 	aCircularBoard := Board
-		                  with: amountOfCells
-		                  and: aWorm
-		                  has: distributions
-		                  basedOn: (Distance parsecs: 20).
-	aCircularBoard with: 2.
-	ship1 move: dice throw in: aCircularBoard.
+		                  withEffects: (Array new: 4 withAll: NoEffect new)
+		                  wormHole: (Worm with: 2 and: 3)
+		                  laps: 2
+		                  length: (Distance parsecs: 20).
+	ship1 := Ship create: 'Ship1'.
+	ship1 move: 4 in: aCircularBoard. "1 + 4 = 5: da la vuelta y queda en 1"
 	self assert: ship1 position equals: 1
 ]
 
 { #category : 'tests' }
-ShipTest >> test005WhenShip1Moves12CellsInABoardWith5CellsThenShip1Has2Laps [
+ShipTest >> test005WhenShip1Moves16CellsInABoardWith5CellsThenItIsOnLap4 [
 
-	| ship1 aCircularBoard dice aWorm distributions |
-	dice := LoadedDice withSequence: #( 16 ).
-	ship1 := Ship create: 'Ship1'.
-
-	aWorm := Worm with: 1 and: 2.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
+	| aCircularBoard ship1 |
 	aCircularBoard := Board
-		                  with: 5
-		                  and: aWorm
-		                  has: distributions
-		                  basedOn: (Distance parsecs: 20).
-	aCircularBoard with: 3.
-	ship1 move: dice throw in: aCircularBoard.
+		                  withEffects: (Array new: 5 withAll: NoEffect new)
+		                  wormHole: (Worm with: 1 and: 2)
+		                  laps: 5
+		                  length: (Distance parsecs: 20).
+	ship1 := Ship create: 'Ship1'.
+	ship1 move: 16 in: aCircularBoard.
 	self assert: ship1 laps equals: 4
 ]
 
 { #category : 'tests' }
 ShipTest >> test006WhenShip1IsInFinalLapThenWinnerIsShip1 [
 
-	| ship1 ships laps aGame aDice dices aDiceBucket amountOfCells aWorm distributions aBoard cardManager |
-	ships := OrderedCollection new.
-	dices := OrderedCollection new.
-	ship1 := 'Ship1'.
-	ships add: ship1.
-	aDice := LoadedDice withSequence: #( 11 ).
-	dices add: aDice.
-	aDiceBucket := DiceBucket with: dices.
-	amountOfCells := 5.
-	aWorm := Worm with: 2 and: 4.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: BlackHole with: 1).
-
-	aBoard := aBoard := Board
-		                    with: amountOfCells
-		                    and: aWorm
-		                    has: distributions
-		                    basedOn: (Distance parsecs: 20).
-	laps := 3.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: laps
-		         cardManager: cardManager.
+	| aGame |
+	aGame := GameBuilder new
+		         shipsNamed: #( 'Ship1' );
+		         diceSequence: #( 11 );
+		         cells: 5;
+		         allCellsWith: BlackHole new;
+		         laps: 3;
+		         build.
 	aGame play.
-
 	self assert: aGame showWinner name equals: 'Ship1'
 ]
 
 { #category : 'tests' }
 ShipTest >> test007WhenShipThrow11AndBoardHas5CellsThenShipWinAt2LapsReturnsTrue [
 
-	| ship1 aLoadedDice aCircularBoard ships laps aWorm distributions |
-	ships := OrderedCollection new.
-	aLoadedDice := LoadedDice withSequence: #( 11 ).
-	ship1 := Ship create: 'Ship1'.
-	aWorm := Worm with: 1 and: 2.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
+	| aCircularBoard ship1 |
 	aCircularBoard := Board
-		                  with: 5
-		                  and: aWorm
-		                  has: distributions
-		                  basedOn: (Distance parsecs: 20).
-	aCircularBoard with: 2.
-	ship1 move: aLoadedDice throw in: aCircularBoard.
-	laps := 2.
-
-	self assert: (ship1 winAt: aCircularBoard) equals: true
+		                  withEffects: (Array new: 5 withAll: NoEffect new)
+		                  wormHole: (Worm with: 1 and: 2)
+		                  laps: 2
+		                  length: (Distance parsecs: 20).
+	ship1 := Ship create: 'Ship1'.
+	ship1 move: 11 in: aCircularBoard. "1+11 -- 12, 12 % 5 = 2"
+	self assert: (ship1 winAt: aCircularBoard)
 ]
 
 { #category : 'tests' }
@@ -234,132 +188,44 @@ ShipTest >> test014WhenShipHas2TurnToSkipAndHAsSkipped1TurnThenItHas1TurnToSkip 
 ]
 
 { #category : 'tests' }
-ShipTest >> test015WhenShipIsInPosition5AndReceiveBlackHoleEffectThenPositionIs1 [
-
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
-	ships := OrderedCollection new.
-	dices := OrderedCollection new.
-	aDice := LoadedDice withSequence: #( 6 ).
-	dices add: aDice.
-	aDiceBucket := DiceBucket with: dices.
-	amountOfCells := 10.
-	aWorm := Worm with: 2 and: 4.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: BlackHole with: 1).
-	aBoard := aBoard := Board
-		                    with: amountOfCells
-		                    and: aWorm
-		                    has: distributions
-		                    basedOn: (Distance parsecs: 20).
-	laps := 3.
-	ships add: 'ship 1'.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: laps
-		         cardManager: cardManager.
-
-	aGame playTurn.
-	self assert: (aGame ships first) position equals: 3
-]
-
-{ #category : 'tests' }
 ShipTest >> test016WhenShipChoiceToNotPlayThenShipRecoverShield [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
-	ships := OrderedCollection new.
-	dices := OrderedCollection new.
-	aDice := LoadedDice withSequence: #( 5 3 ).
-	dices add: aDice.
-	aDiceBucket := DiceBucket with: dices.
-	amountOfCells := 10.
-	aWorm := Worm with: 2 and: 4.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: HyperSpaceJump with: 1).
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	laps := 3.
-	ships add: 'ship 1'.
-	ships add: 'ship 2'.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: laps
-		         cardManager: cardManager.
-	aGame playTurn.
-	aGame playTurn.
-	aGame playTurn.
-	aGame playTurn.
+	| aGame |
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 5 3 );
+		         allCellsWith: HyperSpaceJump new;
+		         laps: 3;
+		         build.
+	aGame playTurn. "Ship 1 -- 10, 2 escudos (-1) por usar hyperspacejump"
+	aGame playTurn. "Ship 2 -- 4"
+	aGame playTurn. "Ship 1 -- 1,lap2"
+	aGame playTurn. "Ship 2 -- 7"
 	aGame skipTurnForShipNamed: 'ship 1'.
-	aGame playTurn.
-	self assert: (aGame ships first) shields equals: 3
+	aGame playTurn. "Ship 2 -- 2,lap2"
+	self assert: (aGame findShipBy: 'ship 1') shields equals: 3 .
 ]
 
 { #category : 'tests' }
 ShipTest >> test017WhenShipMovesMoreCellsThanCellsInBoardThenItActualPositionIs1 [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
-	ships := OrderedCollection new.
-	dices := OrderedCollection new.
-	aDice := LoadedDice withSequence: #( 10 ).
-	dices add: aDice.
-	aDiceBucket := DiceBucket with: dices.
-	amountOfCells := 10.
-	aWorm := Worm with: 3 and: 4.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	laps := 3.
-	ships add: 'ship 1'.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: laps
-		         cardManager: cardManager.
-	aGame playTurn.
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 10 );
+		         laps: 3;
+		         build.
+	aGame playTurn. "1 + 10 = 11: da la vuelta y queda en 1"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 1
 ]
 
 { #category : 'tests' }
 ShipTest >> test018WhenShipMovesToLastCellInLapThanCellsInBoardThenItIsInLastCell [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
-	ships := OrderedCollection new.
-	dices := OrderedCollection new.
-	aDice := LoadedDice withSequence: #( 9 ).
-	dices add: aDice.
-	aDiceBucket := DiceBucket with: dices.
-	amountOfCells := 10.
-	aWorm := Worm with: 2 and: 4.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	laps := 3.
-	ships add: 'ship 1'.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: laps
-		         cardManager: cardManager.
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 9 );
+		         laps: 3;
+		         build.
 	aGame playTurn.
 	self assert: (aGame findShipBy: 'ship 1') position equals: 10
 ]
@@ -367,30 +233,13 @@ ShipTest >> test018WhenShipMovesToLastCellInLapThanCellsInBoardThenItIsInLastCel
 { #category : 'tests' }
 ShipTest >> test019WhenShipMovesByEffectAndItIsInEarlyCellsThenLapsStayZeroAndNoNegative [
 
-	| ships dices aDice aDiceBucket amountOfCells aWorm distributions aBoard laps aGame cardManager |
-	ships := OrderedCollection new.
-	dices := OrderedCollection new.
-	aDice := LoadedDice withSequence: #( 1 ).
-	dices add: aDice.
-	aDiceBucket := DiceBucket with: dices.
-	amountOfCells := 10.
-	aWorm := Worm with: 4 and: 5.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: BlackHole with: 1).
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	laps := 3.
-	ships add: 'ship 1'.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: laps
-		         cardManager: cardManager.
-	aGame playTurn.
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 1 );
+		         allCellsWith: BlackHole new;
+		         wormHoleBetween: 4 and: 5;
+		         laps: 3;
+		         build.
+	aGame playTurn. "cae en 2, el BlackHole lo lleva a 1 sin perder la vuelta"
 	self assert: (aGame findShipBy: 'ship 1') laps equals: 1
 ]

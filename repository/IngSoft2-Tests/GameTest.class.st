@@ -164,7 +164,7 @@ GameTest >> test011WhenShipIsOnCellWithEffectThenReceiveEffect [
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
 		         diceSequence: #( 6 );
-		         allCellsWith: BlackHole;
+		         allCellsWith: BlackHole new;
 		         build.
 	aGame playTurn.
 	self assert: (aGame findShipBy: 'ship 1') position equals: 3
@@ -189,7 +189,7 @@ GameTest >> test013WhenTwoShipsAreInTheSameCellWithEffectThenTheyDoNotBattle [
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 6 2 );
-		         allCellsWith: BlackHole;
+		         allCellsWith: BlackHole new;
 		         wormHoleBetween: 9 and: 10;
 		         build.
 	aGame playTurn. "ship 1: 1 + 6 = 7, el BlackHole lo lleva a 3"
@@ -208,7 +208,7 @@ GameTest >> test014WhenShipIsMovedBecauseAnEffectToACellWithEffectThenShipDoNotR
 	| aGame |
 	aGame := GameBuilder new
 		         diceSequence: #( 6 );
-		         allCellsWith: BlackHole;
+		         allCellsWith: BlackHole new;
 		         build.
 	aGame playTurn.
 	self assert: (aGame findShipBy: 'ship 1') position equals: 3
@@ -221,7 +221,7 @@ GameTest >> test015WhenShipIsMovedByAnEffectToACellWithAnotherShipThenTheyFight 
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 6 6 5 2 );
-		         allCellsWith: BlackHole;
+		         allCellsWith: BlackHole new;
 		         wormHoleBetween: 9 and: 10;
 		         build.
 	aGame playTurn. "ship 1: 1 + 6 = 7, el BlackHole lo lleva a 3"
@@ -241,7 +241,7 @@ GameTest >> test016WhenShipIsMovedByAnEffectToAWormHoleThenItIsNotTransported [
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 7 );
-		         allCellsWith: BlackHole;
+		         allCellsWith: BlackHole new;
 		         wormHoleBetween: 2 and: 4;
 		         build.
 	aGame playTurn. "ship 1: 1 + 7 = 8, el BlackHole lo lleva a 4 (wormhole), pero no lo transporta a 2"

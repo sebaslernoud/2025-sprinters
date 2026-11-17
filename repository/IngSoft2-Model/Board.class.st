@@ -3,7 +3,6 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'amountOfCells',
-		'wormHole',
 		'laps',
 		'cells',
 		'distance'
@@ -13,20 +12,18 @@ Class {
 }
 
 { #category : 'as yet unclassified' }
-Board class >> with: aAmountOfCells and: aWormHole has: aDistribution basedOn: aDistance [
+Board class >> withEffects: effects wormHole: aWorm laps: anAmountOfLaps length: aDistance [
 
-	aAmountOfCells isInteger ifFalse: [
-		^ Error signal: 'Amount of cells must be an integer' ].
-	aAmountOfCells < 1 ifTrue: [
+	effects ifEmpty: [
 		^ Error signal: 'Amount of cells must be greater than zero' ].
-	(aWormHole isInside: aAmountOfCells) ifFalse: [
+	(aWorm isInside: effects size) ifFalse: [
 		^ Error signal:
 			  'Position of the worm hole exceed amount board`s cells' ].
 	^ self new
-		  initializeWith: aAmountOfCells
-		  and: aWormHole
-		  has: aDistribution
-		  basedOn: aDistance
+		  initializeWithEffects: effects
+		  wormHole: aWorm
+		  laps: anAmountOfLaps
+		  length: aDistance
 ]
 
 { #category : 'accessing' }
@@ -53,30 +50,20 @@ Board >> calculatePositionByParsecs: parsecs [
 { #category : 'playing' }
 Board >> effectOnPosition: position [
 
-	(wormHole positions anySatisfy: [ :cell | cell = position ]) ifTrue: [
-		^ wormHole ].
-	^ (cells at: position) effect value
+	^ (cells at: position) effect
 ]
 
 { #category : 'initialization' }
-Board >> initializeWith: aAmountOfCells and: aWormHole has: distributions basedOn: aDistance [
+Board >> initializeWithEffects: effects wormHole: aWorm laps: anAmountOfLaps length: aDistance [
 
-	| cell aDistributor effectsOnCells |
-	amountOfCells := aAmountOfCells.
-	wormHole := aWormHole.
-	laps := 1.
-	distance := aDistance.
-	aDistributor := EffectDistributor
-		                withDistribution: distributions
-		                on: aAmountOfCells.
-
-	effectsOnCells := aDistributor recieveAmountOfEffects.
-	cells := OrderedCollection new.
-	1 to: amountOfCells do: [ :i |
-		cell := Cell new.
-		cell position: i.
-		cell effect: (effectsOnCells at: i).
-		cells add: cell ]
+	| effectsWithWormHole |
+	effectsWithWormHole := effects asArray copy.
+	aWorm positions do: [ :position |
+		effectsWithWormHole at: position put: aWorm ].
+	cells := effectsWithWormHole collect: [ :effect | Cell with: effect ].
+	amountOfCells := cells size.
+	laps := anAmountOfLaps.
+	distance := aDistance
 ]
 
 { #category : 'accessing' }
@@ -120,16 +107,4 @@ Board >> moveThrowTheLaps: currentLap this: position [
 Board >> parsecsPerCell [
 
 	^ distance parsecs / amountOfCells
-]
-
-{ #category : 'instance creation' }
-Board >> with: aNumberOfLaps [
-
-	laps := aNumberOfLaps
-]
-
-{ #category : 'accessing' }
-Board >> wormHole [
-
-	^ wormHole
 ]

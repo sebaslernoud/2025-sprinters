@@ -83,7 +83,7 @@ EffectsTest >> test007WhenApplyAtomicBombEffectToShipThenAllShipPositionAreOneBu
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 12 );
-		         allCellsWith: AtomicBomb;
+		         allCellsWith: AtomicBomb new;
 		         wormHoleBetween: 9 and: 10;
 		         laps: 3;
 		         build.
@@ -102,7 +102,7 @@ EffectsTest >> test008WhenApplyAtomicBombEffectToShipThenAllShipLoseOneShield [
 	| aGame |
 	aGame := GameBuilder new
 		         diceSequence: #( 10 );
-		         allCellsWith: AtomicBomb;
+		         allCellsWith: AtomicBomb new;
 		         laps: 4;
 		         build.
 	aGame playTurn.

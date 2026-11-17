@@ -259,7 +259,7 @@ CardTest >> test014WhenUseRepeatCardBeforePlayingThenItDoesNotApplyTheLastEffect
 	repeatCard := RepeatCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
-		         allCellsWith: HyperSpaceJump;
+		         allCellsWith: HyperSpaceJump new;
 		         deck: { AccelerationCard new. repeatCard. SpeedCard new. SpeedCard new };
 		         build.
 	aGame shipNamed: 'ship 1' useCard: repeatCard with: 'ship 2'.
@@ -276,7 +276,7 @@ CardTest >> test015WhenUseRepeatCardThenItApplyTheLastEffectOnGame [
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 6 7 );
-		         allCellsWith: BlackHole;
+		         allCellsWith: BlackHole new;
 		         wormHoleBetween: 9 and: 10;
 		         deck: { AccelerationCard new. repeatCard. SpeedCard new. SpeedCard new };
 		         build.
@@ -310,7 +310,7 @@ CardTest >> test017WhenTheShipMovesThrowTheBoardAndITACrdGiverCellThenShipReciev
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 3 );
-		         allCellsWith: CardGiver;
+		         allCellsWith: CardGiver new;
 		         wormHoleBetween: 9 and: 10;
 		         deck: { RepeatCard new. AccelerationCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
@@ -326,7 +326,7 @@ CardTest >> test018WhenShipUseRepeatCardAndLastEffectWasaCardGiverThenItDoesNotR
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 3 );
-		         allCellsWith: CardGiver;
+		         allCellsWith: CardGiver new;
 		         wormHoleBetween: 9 and: 10;
 		         deck: { repeatCard. RedoCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.

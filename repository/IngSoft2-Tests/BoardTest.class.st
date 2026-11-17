@@ -8,58 +8,40 @@ Class {
 { #category : 'tests' }
 BoardTest >> test000WhenCreateBoardWithAmountOfCellsThenShowAmountOfCells [
 
-	| aBoard amountOfCells aWorm distributions |
-	amountOfCells := 10.
-	aWorm := Worm with: 4 and: 6.
-
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-
+	| aBoard |
 	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 200).
-	self assert: aBoard amountOfCells equals: amountOfCells
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: (Worm with: 4 and: 6)
+		          laps: 1
+		          length: (Distance parsecs: 200).
+	self assert: aBoard amountOfCells equals: 10
 ]
 
 { #category : 'tests' }
-BoardTest >> test001WhenPlayGameThenReturnGameOver [
+BoardTest >> test001WhenBoardIsCreatedThenTheWormHoleIsTheEffectOfItsTwoCells [
 
-	| aBoard amountOfCells aWorm aX aY distributions |
-	amountOfCells := 10.
-	aX := 4.
-	aY := 6.
-	aWorm := Worm with: aX and: aY.
-
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-
+	| aWorm aBoard |
+	aWorm := Worm with: 4 and: 6.
 	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	self assert: aBoard wormHole positions equals: {
-			aX.
-			aY }
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: aWorm
+		          laps: 1
+		          length: (Distance parsecs: 20).
+	self assert: (aBoard effectOnPosition: 4) equals: aWorm.
+	self assert: (aBoard effectOnPosition: 6) equals: aWorm.
+	self assert: (aBoard effectOnPosition: 5) class equals: NoEffect
 ]
 
 { #category : 'tests' }
 BoardTest >> test002WhenCreateBoardWithWrongWormHolePostionThenReturnsError [
 
-	| amountOfCells aWorm distributions |
-	amountOfCells := 10.
-	aWorm := Worm with: 4 and: 11.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
 	self
 		should: [
 			Board
-				with: amountOfCells
-				and: aWorm
-				has: distributions
-				basedOn: (Distance parsecs: 20) ]
+				withEffects: (Array new: 10 withAll: NoEffect new)
+				wormHole: (Worm with: 4 and: 11)
+				laps: 1
+				length: (Distance parsecs: 20) ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self
@@ -70,18 +52,13 @@ BoardTest >> test002WhenCreateBoardWithWrongWormHolePostionThenReturnsError [
 { #category : 'tests' }
 BoardTest >> test003WhenCreateBoardWithCellsLessThan1ThenReturnsError [
 
-	| amountOfCells aWorm distributions |
-	amountOfCells := 0.
-	aWorm := Worm with: 4 and: 11.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
 	self
 		should: [
 			Board
-				with: amountOfCells
-				and: aWorm
-				has: distributions
-				basedOn: (Distance parsecs: 20) ]
+				withEffects: #(  )
+				wormHole: (Worm with: 4 and: 11)
+				laps: 1
+				length: (Distance parsecs: 20) ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self
@@ -90,200 +67,45 @@ BoardTest >> test003WhenCreateBoardWithCellsLessThan1ThenReturnsError [
 ]
 
 { #category : 'tests' }
-BoardTest >> test004WhenCreateBoardWithCellsNotIntegerThenReturnsError [
-
-	| amountOfCells aWorm distributions |
-	amountOfCells := 3.14.
-	aWorm := Worm with: 4 and: 11.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-	self
-		should: [
-			Board
-				with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20). ]
-		raise: Error
-		withExceptionDo: [ :error |
-			self
-				assert: error messageText
-				equals: 'Amount of cells must be an integer' ]
-]
-
-{ #category : 'tests' }
 BoardTest >> test005WhenShipMovesToWormholeThenBoardKnowsThePositionOfShip [
 
-	| amountOfCells aX aY aWorm aBoard distributions aLoadedDice aDiceBucket ships cardManager aGame dices |
-	amountOfCells := 10.
-	aX := 4.
-	aY := 7.
-	aWorm := Worm with: aX and: aY.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	aLoadedDice := LoadedDice withSequence: #( 6 ).
-	dices := OrderedCollection new.
-	dices add: aLoadedDice.
-	aDiceBucket := DiceBucket with: dices.
-	ships := OrderedCollection new.
-	ships add: 'ship 1'.
-	cardManager := CardManager creation.
-	aGame := Game
-		         with: aBoard
-		         using: aDiceBucket
-		         andShipsNamed: ships
-		         until: 1
-		         cardManager: cardManager.
-	aGame playTurn.
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 6 );
+		         wormHoleBetween: 4 and: 7;
+		         build.
+	aGame playTurn. "cae en 7 y el wormhole lo lleva a 4"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 4
 ]
 
 { #category : 'tests' }
 BoardTest >> test006WhenShipMoveMoreThanCellsInTheBoardThenPositionIsAmountOfCells [
 
-	| amountOfCells aX aY aWorm aBoard aShip loadedDice distributions |
-	amountOfCells := 4.
-	aX := 1.
-	aY := 2.
-	aWorm := Worm with: aX and: aY.
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
+	| aBoard aShip |
 	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	loadedDice := LoadedDice withSequence: #( 6 ).
+		          withEffects: (Array new: 4 withAll: NoEffect new)
+		          wormHole: (Worm with: 1 and: 2)
+		          laps: 1
+		          length: (Distance parsecs: 20).
 	aShip := Ship create: 'ship1'.
-	aShip move: loadedDice throw in: aBoard.
+	aShip move: 6 in: aBoard.
 	self assert: aShip position equals: 4
-]
-
-{ #category : 'tests' }
-BoardTest >> test007WhenGivenDistributionToABoardThenAllAddUpToTheExacAmountOfCells [
-
-	| amountOfCells aX aY aWorm aBoard distributions total |
-	amountOfCells := 5.
-	"El numero de celdas por ahora esta logicamente implementado para que sea siempre un entero, un par"
-	aX := 1.
-	aY := 2.
-	aWorm := Worm with: aX and: aY.
-
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 0.4).
-	distributions add: (Distribution at: BlackHole with: 0.6).
-
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 100).
-	total := (aBoard amountOfCellsOf: 'NoEffect')
-	         + (aBoard amountOfCellsOf:'BlackHole').
-	self assert: total equals: amountOfCells
 ]
 
 { #category : 'tests' }
 BoardTest >> test008WhenAskForEffectOnPositionThenBoardReturnItEffect [
 
-	| amountOfCells aX aY aWorm aBoard distributions effect |
-	amountOfCells := 4.
-	"El numero de celdas por ahora esta logicamente implementado para que sea siempre un entero, un par"
-	aX := 1.
-	aY := 2.
-	aWorm := Worm with: aX and: aY.
-
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: BlackHole with: 1).
-
+	| aBoard |
 	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 100).
-	effect := aBoard effectOnPosition: 3.
-	self assert: effect className equals: 'BlackHole'
-]
-
-{ #category : 'tests' }
-BoardTest >> test009WhenGivenDistributionToABoardThenAllAddUpToTheExactAmountOfCellsAs4 [
-
-	| amountOfCells aX aY aWorm aBoard distributions total |
-	amountOfCells := 2.
-	"El numero de celdas por ahora esta logicamente implementado para que sea siempre un entero, un par"
-	aX := 1.
-	aY := 2.
-	aWorm := Worm with: aX and: aY.
-
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 0.4).
-	distributions add: (Distribution at: BlackHole with: 0.6).
-
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 1).
-	total := (aBoard amountOfCellsOf: 'NoEffect')
-	         + (aBoard amountOfCellsOf: 'BlackHole').
-	self assert: total equals: amountOfCells
-]
-
-{ #category : 'tests' }
-BoardTest >> test010WhenCreateBoardWithDistributionsThenEffectsOFCellsISNoEFfect [
-
-	| amountOfCells aX aY aWorm aBoard distributions |
-	amountOfCells := 4.
-	"El numero de celdas por ahora esta logicamente implementado para que sea siempre un entero, un par"
-	aX := 1.
-	aY := 2.
-	aWorm := Worm with: aX and: aY.
-
-	distributions := OrderedCollection new.
-	distributions add: (Distribution at: NoEffect with: 1).
-
-	aBoard := Board
-		          with: amountOfCells
-		          and: aWorm
-		          has: distributions
-		          basedOn: (Distance parsecs: 20).
-	self
-		assert: (aBoard effectOnPosition: 3) className
-		equals: 'NoEffect'
-]
-
-{ #category : 'tests' }
-BoardTest >> test011WhenBoardIsCreatedThenEffectsAreDistributedAccordingToProbability [
-
-	| board distributions tolerance cardGiverRatio blackHoleRatio noEffectRatio |
-	distributions := {
-		                 (Distribution at: NoEffect with: 0.38).
-		                 (Distribution at: CardGiver with: 0.10).
-		                 (Distribution at: BlackHole with: 0.20).
-		                 (Distribution at: HyperSpaceJump with: 0.20).
-		                 (Distribution at: MoonWalk with: 0.10).
-		                 (Distribution
-			                  at: (HyperJump with: {
-						                   (Distance lightYear: 27).
-						                   (Distance lightYear: 18).
-						                   (Distance lightYear: 9) })
-			                  with: 0.08).
-		                 (Distribution at: AtomicBomb with: 0.02) }.
-	board := Board
-		         with: 1000
-		         and: (Worm with: 2 and: 4)
-		         has: distributions
-		         basedOn: (Distance parsecs: 20).
-	tolerance := 0.05. "5% de margen de error"
-	cardGiverRatio := (board amountOfCellsOf: 'CardGiver') / 1000.
-	blackHoleRatio := (board amountOfCellsOf: 'BlackHole') / 1000.
-	noEffectRatio := (board amountOfCellsOf: 'NoEffect') / 1000.
-	self assert: (cardGiverRatio between: 0.10 - tolerance and: 0.10 + tolerance).
-	self assert: (blackHoleRatio between: 0.20 - tolerance and: 0.20 + tolerance).
-	self assert: (noEffectRatio between: 0.38 - tolerance and: 0.38 + tolerance)
+		          withEffects: {
+				          NoEffect new.
+				          NoEffect new.
+				          BlackHole new.
+				          HyperSpaceJump new.
+				          NoEffect new }
+		          wormHole: (Worm with: 1 and: 2)
+		          laps: 1
+		          length: (Distance parsecs: 100).
+	self assert: (aBoard effectOnPosition: 3) class equals: BlackHole.
+	self assert: (aBoard effectOnPosition: 4) class equals: HyperSpaceJump
 ]

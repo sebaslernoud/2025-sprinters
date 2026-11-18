@@ -8,5 +8,6 @@ Class {
 { #category : 'playing' }
 AtomicBomb >> applyTo: aShip in: aGame [
 
-	aGame applyAtomicEffectOn: aShip
+	aGame sendAllShipsToStart.
+	aGame damageAllShips
 ]

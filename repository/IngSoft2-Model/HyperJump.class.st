@@ -28,11 +28,7 @@ HyperJump class >> with: distanceToMove [
 { #category : 'playing' }
 HyperJump >> applyTo: aShip in: aGame [
 
-	| board parsecsToJump distance |
-	board := aGame board.
-	parsecsToJump := self nextParsecs.
-	distance := board calculatePositionByParsecs: parsecsToJump.
-	aShip move: distance in: board
+	aGame move: aShip by: (aGame cellsIn: self nextDistance)
 ]
 
 { #category : 'initialization' }
@@ -42,11 +38,11 @@ HyperJump >> initializeWith: aCollectionOfDistanceToMove [
 	index := 1
 ]
 
-{ #category : 'playing' }
-HyperJump >> nextParsecs [
+{ #category : 'as yet unclassified' }
+HyperJump >> nextDistance [
 
-	| parsecsToJump |
-	parsecsToJump := (distancesToMove at: index) parsecs.
+	| distance |
+	distance := distancesToMove at: index.
 	index := index \\ distancesToMove size + 1.
-	^ parsecsToJump
+	^ distance
 ]

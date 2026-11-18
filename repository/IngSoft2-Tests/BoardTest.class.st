@@ -88,7 +88,7 @@ BoardTest >> test006WhenShipMoveMoreThanCellsInTheBoardThenPositionIsAmountOfCel
 		          laps: 1
 		          length: (Distance parsecs: 20).
 	aShip := Ship create: 'ship1'.
-	aShip move: 6 in: aBoard.
+	aBoard move: aShip by: 6.
 	self assert: aShip position equals: 4
 ]
 
@@ -108,4 +108,81 @@ BoardTest >> test008WhenAskForEffectOnPositionThenBoardReturnItEffect [
 		          length: (Distance parsecs: 100).
 	self assert: (aBoard effectOnPosition: 3) class equals: BlackHole.
 	self assert: (aBoard effectOnPosition: 4) class equals: HyperSpaceJump
+]
+
+{ #category : 'tests' }
+BoardTest >> test012WhenShipLandsOnTheLastCellThenItStaysOnTheSameLap [
+
+	| aBoard aShip |
+	aBoard := Board
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: (Worm with: 2 and: 4)
+		          laps: 2
+		          length: (Distance parsecs: 20).
+	aShip := Ship create: 'ship'.
+	aBoard move: aShip by: 9.
+	self assert: aShip position equals: 10.
+	self assert: aShip laps equals: 1
+]
+
+{ #category : 'tests' }
+BoardTest >> test013WhenShipPassesTheLastCellThenItStartsANewLap [
+
+	| aBoard aShip |
+	aBoard := Board
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: (Worm with: 2 and: 4)
+		          laps: 2
+		          length: (Distance parsecs: 20).
+	aShip := Ship create: 'ship'.
+	aBoard move: aShip by: 10.
+	self assert: aShip position equals: 1.
+	self assert: aShip laps equals: 2
+]
+
+{ #category : 'tests' }
+BoardTest >> test014WhenShipMovesBackwardsFromALapThenItGoesBackToThePreviousLap [
+
+	| aBoard aShip |
+	aBoard := Board
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: (Worm with: 2 and: 4)
+		          laps: 2
+		          length: (Distance parsecs: 20).
+	aShip := Ship create: 'ship'.
+	aBoard move: aShip by: 13. "celda 4 de la vuelta 2"
+	aBoard move: aShip by: -10.
+	self assert: aShip position equals: 4.
+	self assert: aShip laps equals: 1
+]
+
+{ #category : 'tests' }
+BoardTest >> test015WhenShipMovesBeyondTheFinishThenItStaysOnTheFinish [
+
+	| aBoard aShip |
+	aBoard := Board
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: (Worm with: 2 and: 4)
+		          laps: 3
+		          length: (Distance parsecs: 20).
+	aShip := Ship create: 'ship'.
+	aBoard move: aShip by: 100.
+	self assert: aShip position equals: 10.
+	self assert: aShip laps equals: 3
+]
+
+{ #category : 'tests' }
+BoardTest >> test016WhenShipMovesBackwardsBeforeTheStartThenItStaysOnTheFirstCell [
+
+	| aBoard aShip |
+	aBoard := Board
+		          withEffects: (Array new: 10 withAll: NoEffect new)
+		          wormHole: (Worm with: 2 and: 4)
+		          laps: 2
+		          length: (Distance parsecs: 20).
+	aShip := Ship create: 'ship'.
+	aBoard move: aShip by: 2.
+	aBoard move: aShip by: -5.
+	self assert: aShip position equals: 1.
+	self assert: aShip laps equals: 1
 ]

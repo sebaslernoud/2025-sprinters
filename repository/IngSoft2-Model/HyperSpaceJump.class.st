@@ -8,6 +8,7 @@ Class {
 { #category : 'playing' }
 HyperSpaceJump >> applyTo: aShip in: aGame [
 
-	aGame board move: aShip position + 4 ship: aShip.
+	aGame move: aShip by: 4.
 	aShip loseShield
+
 ]

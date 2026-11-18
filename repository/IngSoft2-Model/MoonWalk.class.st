@@ -20,7 +20,7 @@ MoonWalk class >> move: numberOfCells [
 { #category : 'playing' }
 MoonWalk >> applyTo: aShip in: aGame [
 
-	aGame applyMoonWalkEffectOn: aShip  moving: numberOfCells
+	aGame moveAllShipsExcept: aShip by: numberOfCells negated
 ]
 
 { #category : 'initialization' }

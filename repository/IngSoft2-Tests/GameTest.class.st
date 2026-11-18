@@ -62,8 +62,8 @@ GameTest >> test004When2ShipsPlayAndShipOneWonThenReturnPositions [
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 5 );
 		         build.
-	(aGame findShipBy: 'ship 1') move: 10 in: aGame board.
-	(aGame findShipBy: 'ship 2') move: 5 in: aGame board.
+	aGame move: (aGame findShipBy: 'ship 1') by: 10.
+	aGame move: (aGame findShipBy: 'ship 2') by: 5.
 	aGame play.
 	expectedPositions := Dictionary new.
 	expectedPositions at: 'ship 1' put: 10.
@@ -120,7 +120,7 @@ GameTest >> test008WhenGameHasPlayedThenShowRanking [
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 6 10 );
 		         build.
-	(aGame findShipBy: 'ship 2') move: 10 in: aGame board.
+	aGame move: (aGame findShipBy: 'ship 2') by: 10.
 	aGame play.
 	self
 		assert: aGame showRanking
@@ -277,4 +277,17 @@ GameTest >> test017WhenGameIsCreatedThenAShipFromCollectionWins [
 		         build.
 	aGame play.
 	self assert: (shipNames includes: aGame showWinner name)
+]
+
+{ #category : 'tests' }
+GameTest >> test018WhenShipReachesTheFinishThenItWinsEvenIfTheCellHasAnEffect [
+
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 9 );
+		         allCellsWith: BlackHole new;
+		         build.
+	aGame playTurn. "1 + 9 = 10: llega a la meta y no se aplica el BlackHole"
+	self assert: aGame showWinner name equals: 'ship 1'.
+	self assert: (aGame findShipBy: 'ship 1') position equals: 10
 ]

@@ -25,7 +25,7 @@ ShipTest >> test001WhenShipReceiveANumberThenMovesThatAmount [
 		          laps: 1
 		          length: (Distance parsecs: 20).
 	ship1 := Ship create: 'Ship1'.
-	ship1 move: 3 in: aBoard.
+	aBoard move: ship1 by: 3.
 	self assert: ship1 position equals: 4
 ]
 
@@ -63,7 +63,7 @@ ShipTest >> test004WhenShip1PositionIsLastOneAndThrow1ThenShip1StartFromTheBegin
 		                  laps: 2
 		                  length: (Distance parsecs: 20).
 	ship1 := Ship create: 'Ship1'.
-	ship1 move: 4 in: aCircularBoard. "1 + 4 = 5: da la vuelta y queda en 1"
+	aCircularBoard move: ship1 by: 4. "1 + 4 = 5: da la vuelta y queda en 1"
 	self assert: ship1 position equals: 1
 ]
 
@@ -77,8 +77,9 @@ ShipTest >> test005WhenShip1Moves16CellsInABoardWith5CellsThenItIsOnLap4 [
 		                  laps: 5
 		                  length: (Distance parsecs: 20).
 	ship1 := Ship create: 'Ship1'.
-	ship1 move: 16 in: aCircularBoard.
-	self assert: ship1 laps equals: 4
+	aCircularBoard move: ship1 by: 16. "casilla 17 = celda 2 de la vuelta 4"
+	self assert: ship1 laps equals: 4.
+	self assert: ship1 position equals: 2
 ]
 
 { #category : 'tests' }
@@ -106,7 +107,7 @@ ShipTest >> test007WhenShipThrow11AndBoardHas5CellsThenShipWinAt2LapsReturnsTrue
 		                  laps: 2
 		                  length: (Distance parsecs: 20).
 	ship1 := Ship create: 'Ship1'.
-	ship1 move: 11 in: aCircularBoard. "1+11 -- 12, 12 % 5 = 2"
+	aCircularBoard move: ship1 by: 11. "1+11 -- 12, 12 % 5 = 2"
 	self assert: (ship1 winAt: aCircularBoard)
 ]
 

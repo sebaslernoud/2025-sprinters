@@ -38,19 +38,22 @@ Board >> amountOfCellsOf: anEffectOrClass [
 	^ cells count: [ :cell | cell effect className = anEffectOrClass ]
 ]
 
-{ #category : 'as yet unclassified' }
-Board >> calculatePositionByParsecs: parsecs [
+{ #category : 'converting' }
+Board >> cellsIn: aDistance [
 
-	| parsecsInCell newPosition |
-	parsecsInCell := self parsecsPerCell.
-	newPosition := (parsecs / parsecsInCell) ceiling.
-	^ newPosition
+	^ (aDistance parsecs / self parsecsPerCell) ceiling
 ]
 
 { #category : 'playing' }
 Board >> effectOnPosition: position [
 
 	^ (cells at: position) effect
+]
+
+{ #category : 'accessing' }
+Board >> indexOf: aLocation [
+
+	^ aLocation lap - 1 * amountOfCells + aLocation cell
 ]
 
 { #category : 'initialization' }
@@ -66,45 +69,49 @@ Board >> initializeWithEffects: effects wormHole: aWorm laps: anAmountOfLaps len
 	distance := aDistance
 ]
 
-{ #category : 'accessing' }
-Board >> laps [
+{ #category : 'testing' }
+Board >> isTheFinish: aLocation [
 
-	^ laps
+	^ (self indexOf: aLocation) = self lastIndex
+]
+
+{ #category : 'accessing' }
+Board >> lastIndex [
+
+	^ laps * amountOfCells
+]
+
+{ #category : 'accessing' }
+Board >> locationAt: anIndex [
+
+	| index |
+	index := (anIndex max: 1) min: self lastIndex.
+	^ Location
+		  cell: index - 1 \\ amountOfCells + 1
+		  lap: index - 1 // amountOfCells + 1
 ]
 
 { #category : 'as yet unclassified' }
-Board >> move: aDistance ship: aShip [
+Board >> move: aShip by: anAmountOfCells [
 
-	| newPosition currentLap position modPosition |
-	newPosition := aDistance <= 0
-		               ifTrue: [ 1 ]
-		               ifFalse: [ aDistance ].
-
-	currentLap := self moveThrowTheLaps: aShip laps this: newPosition.
-
-	position := laps > 1
-		            ifTrue: [
-			            modPosition := newPosition \\ amountOfCells.
-			            modPosition = 0
-				            ifTrue: [ amountOfCells ]
-				            ifFalse: [ modPosition ] ]
-		            ifFalse: [ (newPosition max: 1) min: amountOfCells ].
-
-	aShip updatePosition: position andLap: currentLap
+	aShip moveTo:
+		(self locationAt: (self indexOf: aShip location) + anAmountOfCells)
 ]
 
-{ #category : 'playing' }
-Board >> moveThrowTheLaps: currentLap this: position [
+{ #category : 'as yet unclassified' }
+Board >> moveToStart: aShip [
 
-	| lapValue |
-	lapValue := currentLap + (position // amountOfCells).
-	lapValue <= 0 ifTrue: [
-		^ Error signal: 'Current lap cannot be negative' ].
-	^ lapValue
+	aShip moveTo: aShip location atStart
 ]
 
 { #category : 'convertion' }
 Board >> parsecsPerCell [
 
 	^ distance parsecs / amountOfCells
+]
+
+{ #category : 'as yet unclassified' }
+Board >> teleport: aShip to: aCell [
+
+	aShip moveTo: (Location cell: aCell lap: aShip laps)
 ]

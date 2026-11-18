@@ -40,37 +40,28 @@ Game >> applyAccelerationCardEffect [
 	ships do: [:ship | ship increaseBonusThrow  ].
 ]
 
-{ #category : 'playing' }
-Game >> applyAtomicEffectOn: aShip [
-
-	ships do: [ :ship |
-		ship moveToPosition: 1.
-		ship loseShield ]
-]
-
-{ #category : 'playing' }
-Game >> applyMoonWalkEffectOn: aShip moving: numberOfCells [
-	 ships do: [ :otherShip |
-		otherShip ~~ aShip ifTrue: [
-			otherShip move: numberOfCells * -1 in: board ] ].
-]
-
-{ #category : 'accessing' }
-Game >> board [
-
-	^ board
-]
-
 { #category : 'accessing' }
 Game >> cardManager [
 
 	^ cardManager
 ]
 
+{ #category : 'converting' }
+Game >> cellsIn: aDistance [
+
+	^ board cellsIn: aDistance
+]
+
 { #category : 'accessing' }
 Game >> currentTopPlayer [
 
 	^ self shipsSortedByPosition at: 1.
+]
+
+{ #category : 'as yet unclassified' }
+Game >> damageAllShips [
+
+	ships do: [ :ship | ship loseShield ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -83,6 +74,12 @@ Game >> effectManager [
 Game >> findShipBy: aName [
 
 	^ ships detect: [ :ship | ship name = aName ]
+]
+
+{ #category : 'private' }
+Game >> finish [
+
+	status := Finished new
 ]
 
 { #category : 'initialization' }
@@ -105,6 +102,19 @@ Game >> keepPlaying [
 	status keepPlaying: self
 ]
 
+{ #category : 'as yet unclassified' }
+Game >> move: aShip by: anAmountOfCells [
+
+	board move: aShip by: anAmountOfCells
+]
+
+{ #category : 'as yet unclassified' }
+Game >> moveAllShipsExcept: aShip by: anAmountOfCells [
+
+	(ships copyWithout: aShip) do: [ :ship |
+		board move: ship by: anAmountOfCells ]
+]
+
 { #category : 'playing' }
 Game >> play [
 
@@ -116,12 +126,14 @@ Game >> play [
 { #category : 'playing' }
 Game >> playNextTurn [
 
-	| currentShip rolledDistance boardEffect |
+	| currentShip |
 	currentShip := turnManager nextShip.
-	rolledDistance := bucketOfDices rollFor: currentShip.
-	currentShip move: rolledDistance in: board.
-	boardEffect := board effectOnPosition: currentShip position.
-	effectManager apply: boardEffect to: currentShip in: self.
+	board move: currentShip by: (bucketOfDices rollFor: currentShip).
+	(currentShip winAt: board) ifTrue: [ ^ self finish ].
+	effectManager
+		apply: (board effectOnPosition: currentShip position)
+		to: currentShip
+		in: self.
 	battleManager resolveIfNeededAt: currentShip in: self.
 	self someShipWon
 ]
@@ -140,6 +152,12 @@ Game >> resolveShipNamed: shipName useCard: aCard with: anotherShipName [
 		by: (self findShipBy: shipName)
 		target: (self findShipBy: anotherShipName)
 		in: self
+]
+
+{ #category : 'as yet unclassified' }
+Game >> sendAllShipsToStart [
+
+	ships do: [ :ship | board moveToStart: ship ]
 ]
 
 { #category : 'playing' }
@@ -188,8 +206,13 @@ Game >> skipTurnForShipNamed: shipName [
 { #category : 'playing' }
 Game >> someShipWon [
 
-	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [
-		status := Finished new ]
+	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [ self finish ]
+]
+
+{ #category : 'as yet unclassified' }
+Game >> teleport: aShip to: aCell [
+
+	board teleport: aShip to: aCell
 ]
 
 { #category : 'playing' }

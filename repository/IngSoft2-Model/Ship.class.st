@@ -5,7 +5,8 @@ Class {
 		'position',
 		'name',
 		'currentLap',
-		'state'
+		'state',
+		'location'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -83,30 +84,33 @@ Ship >> increaseBonusThrow [
 { #category : 'initialization' }
 Ship >> initializeWith: aName [
 
-	currentLap := 1.
-	position := 1.
 	name := aName.
+	location := Location cell: 1 lap: 1.
 	state := ShipState creation
 ]
 
 { #category : 'testing' }
 Ship >> isAheadOf: anotherShip [
 
-	^ self laps > anotherShip laps or: [
-		  self laps = anotherShip laps and: [
-			  self position > anotherShip position ] ]
+	^ location isAheadOf: anotherShip location
 ]
 
 { #category : 'accessing' }
 Ship >> laps [
 
-	^ currentLap
+	^ location lap
+]
+
+{ #category : 'accessing' }
+Ship >> location [
+
+	^ location
 ]
 
 { #category : 'playing' }
 Ship >> loseFight [
 
-	position := 1.
+	self moveTo: location atStart.
 	state loseFight
 ]
 
@@ -116,18 +120,10 @@ Ship >> loseShield [
 	state loseShield
 ]
 
-{ #category : 'playing' }
-Ship >> move: numberOfCells in: aBoard [
+{ #category : 'path commands' }
+Ship >> moveTo: aLocation [
 
-	| newPosition |
-	newPosition := position + numberOfCells.
-	aBoard move: newPosition ship: self
-]
-
-{ #category : 'as yet unclassified' }
-Ship >> moveToPosition: aPosition [
-
-	position := aPosition
+	location := aLocation
 ]
 
 { #category : 'accessing' }
@@ -139,7 +135,7 @@ Ship >> name [
 { #category : 'accessing' }
 Ship >> position [
 
-	^ position
+	^ location cell
 ]
 
 { #category : 'playing' }
@@ -193,13 +189,6 @@ Ship >> turnsThatHasToSkip [
 	^ state turnsToSkip
 ]
 
-{ #category : 'as yet unclassified' }
-Ship >> updatePosition: newPosition andLap: newLaps [
-
-	position := newPosition.
-	currentLap := newLaps
-]
-
 { #category : 'accessing' }
 Ship >> wantsToPlay [
 
@@ -209,6 +198,5 @@ Ship >> wantsToPlay [
 { #category : 'playing' }
 Ship >> winAt: aBoard [
 
-	^ (currentLap = aBoard laps and: position >= aBoard amountOfCells)
-		  or: currentLap > aBoard laps
+	^ aBoard isTheFinish: location
 ]

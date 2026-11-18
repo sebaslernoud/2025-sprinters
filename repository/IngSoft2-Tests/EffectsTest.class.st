@@ -11,7 +11,7 @@ EffectsTest >> test001WhenApplyBlackHoleEffectToShipThenShipMove4Cells [
 	| aGame ship1 |
 	aGame := GameBuilder new build.
 	ship1 := aGame findShipBy: 'ship 1'.
-	ship1 move: 6 in: aGame board. "queda en 7"
+	aGame move: ship1 by: 6. "queda en 7"
 	BlackHole new applyTo: ship1 in: aGame.
 	self assert: ship1 position equals: 3
 ]
@@ -22,7 +22,7 @@ EffectsTest >> test002WhenApplyBlackHoleEffectNearTheStartThenShipPositionIsNeve
 	| aGame ship1 |
 	aGame := GameBuilder new build.
 	ship1 := aGame findShipBy: 'ship 1'.
-	ship1 move: 2 in: aGame board. "queda en 3; 3 - 4 seria -1"
+	aGame move: ship1 by: 2. "queda en 3; 3 - 4 seria -1"
 	BlackHole new applyTo: ship1 in: aGame.
 	self assert: ship1 position equals: 1
 ]
@@ -56,9 +56,10 @@ EffectsTest >> test005WhenApplyMoonWalkEffectToShip1ThenShip2MoveNPositionBackwa
 		         laps: 2;
 		         build.
 	ship2 := aGame findShipBy: 'ship 2'.
-	ship2 move: 13 in: aGame board. "queda en la celda 4 de la vuelta 2"
+	aGame move: ship2 by: 13. "queda en la celda 4 de la vuelta 2"
 	(MoonWalk move: 10) applyTo: (aGame findShipBy: 'ship 1') in: aGame.
-	self assert: ship2 position equals: 1
+	self assert: ship2 position equals: 4.
+	self assert: ship2 laps equals: 1
 ]
 
 { #category : 'tests' }
@@ -69,7 +70,7 @@ EffectsTest >> test006WhenApplyAtomicBombEffectThenAllShipsGoBackToTheFirstCell 
 		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
 		         laps: 4;
 		         build.
-	(aGame findShipBy: 'ship 2') move: 23 in: aGame board.
+	aGame move: (aGame findShipBy: 'ship 2') by: 23.
 	AtomicBomb new applyTo: (aGame findShipBy: 'ship 1') in: aGame.
 	self assert: (aGame findShipBy: 'ship 1') position equals: 1.
 	self assert: (aGame findShipBy: 'ship 2') position equals: 1.

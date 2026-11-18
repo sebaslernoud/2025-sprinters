@@ -13,5 +13,5 @@ BlackHole class >> applyTo: aShip in: aGame [
 { #category : 'playing' }
 BlackHole >> applyTo: aShip in: aGame [
 
-	aGame board move: aShip position - 4 ship: aShip
+	aGame move: aShip by: -4
 ]

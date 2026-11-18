@@ -36,12 +36,6 @@ HyperJump >> applyTo: aShip in: aGame [
 ]
 
 { #category : 'initialization' }
-HyperJump >> initializeThis [
-
-	^ self
-]
-
-{ #category : 'initialization' }
 HyperJump >> initializeWith: aCollectionOfDistanceToMove [
 
 	distancesToMove := aCollectionOfDistanceToMove.

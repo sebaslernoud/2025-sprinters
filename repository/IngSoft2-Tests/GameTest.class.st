@@ -262,13 +262,17 @@ GameTest >> test017WhenGameIsCreatedThenAShipFromCollectionWins [
 		         dice: { Dice with: 6 };
 		         cells: 5;
 		         distributions: {
-				         (Distribution at: NoEffect with: 0.38).
-				         (Distribution at: CardGiver with: 0.10).
-				         (Distribution at: BlackHole with: 0.20).
-				         (Distribution at: HyperSpaceJump with: 0.20).
-				         (Distribution at: MoonWalk with: 0.10).
-				         (Distribution at: (HyperJump with: distancesToMove) with: 0.08).
-				         (Distribution at: AtomicBomb with: 0.02) };
+				         (Distribution of: [ NoEffect new ] withProbability: 0.38).
+				         (Distribution of: [ CardGiver new ] withProbability: 0.10).
+				         (Distribution of: [ BlackHole new ] withProbability: 0.17).
+				         (Distribution of: [ HyperSpaceJump new ] withProbability: 0.17).
+				         (Distribution
+					          of: [ MoonWalk move: (Random new nextIntegerBetween: 1 and: 5) ]
+					          withProbability: 0.09).
+				         (Distribution
+					          of: [ HyperJump with: distancesToMove ]
+					          withProbability: 0.07).
+				         (Distribution of: [ AtomicBomb new ] withProbability: 0.02) };
 		         laps: 3;
 		         build.
 	aGame play.

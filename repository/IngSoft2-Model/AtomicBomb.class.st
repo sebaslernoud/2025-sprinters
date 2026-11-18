@@ -5,11 +5,6 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'initialization' }
-AtomicBomb class >> initializeThis [
-	^ self new.
-]
-
 { #category : 'playing' }
 AtomicBomb >> applyTo: aShip in: aGame [
 

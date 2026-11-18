@@ -116,26 +116,15 @@ TurnManagerTest >> test006WhenShip1CanNotPlayThenNextPlayableShipIsShip2 [
 ]
 
 { #category : 'tests' }
-TurnManagerTest >> test008WhenAllShipsCanNotPlayThenRaiseError [
+TurnManagerTest >> test008WhenAllShipsCanNotPlayThenTheyLoseTheirTurnsUntilOneCanPlay [
 
-	| ships ship1 ship2 turnManager |
-	ships := OrderedCollection new.
+	| ship1 ship2 turnManager |
 	ship1 := Ship create: 'ship1'.
 	ship2 := Ship create: 'ship2'.
-	ships add: ship1.
-	ships add: ship2.
-	ship1 loseShield.
-	ship1 loseShield.
-	ship1 loseShield.
-	ship2 loseShield.
-	ship2 loseShield.
-	ship2 loseShield.
-	turnManager := TurnManager with: ships.
-	self
-		should: [ turnManager nextShip ]
-		raise: Error
-		withExceptionDo: [ :error |
-			self
-				assert: error messageText
-				equals: 'There is no ship witch can play' ]
+	3 timesRepeat: [ ship1 loseShield ].
+	3 timesRepeat: [ ship2 loseShield ].
+	turnManager := TurnManager with: { ship1. ship2 }.
+	"Cada una pierde sus 2 turnos y despues vuelven a jugar en orden"
+	self assert: turnManager nextShip equals: ship1.
+	self assert: turnManager nextShip equals: ship2
 ]

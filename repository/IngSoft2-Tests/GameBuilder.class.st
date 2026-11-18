@@ -83,9 +83,8 @@ GameBuilder >> diceSequence: numbers [
 GameBuilder >> distributions: aCollectionOfDistributions [
 
 	effectsGenerator := [ :amount |
-	                    (EffectDistributor
-		                     withDistribution: aCollectionOfDistributions
-		                     on: amount) recieveAmountOfEffects ]
+	                    (EffectDistributor with: aCollectionOfDistributions)
+		                    effectsFor: amount ]
 ]
 
 { #category : 'configuring' }

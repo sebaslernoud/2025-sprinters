@@ -180,14 +180,6 @@ EffectsTest >> test012WhenCreatHuperJumpEffectWithCellsHaveToBeLessThanThePreviu
 ]
 
 { #category : 'tests' }
-EffectsTest >> test013WhenHavingMoonwalkEffectThenHasNCells [
-
-	| distribution |
-	distribution := Distribution at: MoonWalk with: 1.
-	self assert: distribution cellClass numberOfCells equals: 10
-]
-
-{ #category : 'tests' }
 EffectsTest >> test014WhenCreatHyperJumpWithParsecsrEffectToShipThenItMovesParsecs [
 
 	| aGame |

@@ -5,11 +5,6 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'initialization' }
-HyperSpaceJump class >> initializeThis [
-	^ self new.
-]
-
 { #category : 'playing' }
 HyperSpaceJump >> applyTo: aShip in: aGame [
 

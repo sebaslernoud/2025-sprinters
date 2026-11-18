@@ -33,19 +33,21 @@ TurnManager >> initializeWith: shipCollection [
 { #category : 'playing' }
 TurnManager >> nextShip [
 
-	| totalShips turnsSkipped ship |
-	totalShips := ships size.
-	turnsSkipped := 0.
+	| ship |
+	ship := self shipInTurnOrder.
+	[ ship canPlay and: [ ship wantsToPlay ] ] whileFalse: [
+		ship skipTurn.
+		ship := self shipInTurnOrder ].
+	^ ship
+]
 
-	[ turnsSkipped < totalShips ] whileTrue: [
-		ship := ships at: turn.
-		turn := turn \\ totalShips + 1.
-		(ship canPlay and: [ ship wantsToPlay ])
-			ifTrue: [ ^ ship ]
-			ifFalse: [
-				ship skipTurn.
-				turnsSkipped := turnsSkipped + 1 ] ].
-	Error signal: 'There is no ship witch can play'
+{ #category : 'as yet unclassified' }
+TurnManager >> shipInTurnOrder [
+
+	| ship |
+	ship := ships at: turn.
+	turn := turn \\ ships size + 1.
+	^ ship
 ]
 
 { #category : 'playing' }

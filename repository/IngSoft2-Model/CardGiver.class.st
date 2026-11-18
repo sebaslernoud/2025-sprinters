@@ -5,12 +5,6 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'initialization' }
-CardGiver class >> initializeThis [
-
-	^ self new
-]
-
 { #category : 'playing' }
 CardGiver >> applyTo: aShip in: aGame [
 

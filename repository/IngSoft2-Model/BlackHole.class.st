@@ -10,11 +10,6 @@ BlackHole class >> applyTo: aShip in: aGame [
 	self shouldBeImplemented.
 ]
 
-{ #category : 'initialization' }
-BlackHole class >> initializeThis [
-	^ self new.
-]
-
 { #category : 'playing' }
 BlackHole >> applyTo: aShip in: aGame [
 

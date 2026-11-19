@@ -1,7 +1,7 @@
 "
 Soy una herramienta de los tests, no formo parte del modelo del juego.
 
-Armo un Game válido con valores por defecto (1 nave, tablero de 10 celdas con efecto de blackhole,
+Armo un Game válido con valores por defecto (1 nave, tablero de 10 celdas sin efectos,
 wormhole entre 2 y 4, 20 parsecs, 1 vuelta, dado cargado que siempre saca 1 y mazo al azar),
 para que cada test configure solo lo que le resulta relevante (patrón Builder).
 
@@ -10,10 +10,11 @@ Ejemplo:
 		shipsNamed: #( 'ship 1' 'ship 2' );
 		diceSequence: #( 6 3 );
 		allCellsWith: BlackHole new;
+		deck: { SpeedCard new. RedoCard new. RepeatCard new. AccelerationCard new };
 		build.
 
 El Game resultante se crea siempre con su única forma de inicialización
-(Game class >> with:using:andShipsNamed:until:cardManager:).
+(Game class >> with:using:andShipsNamed:deck:).
 "
 Class {
 	#name : 'GameBuilder',
@@ -25,8 +26,8 @@ Class {
 		'wormHole',
 		'length',
 		'laps',
-		'cardManager',
-		'effectsGenerator'
+		'effectsGenerator',
+		'deck'
 	],
 	#category : 'IngSoft2-Tests',
 	#package : 'IngSoft2-Tests'
@@ -51,7 +52,7 @@ GameBuilder >> build [
 		  with: board
 		  using: (DiceBucket with: dice)
 		  andShipsNamed: shipNames
-		  cardManager: cardManager
+		  deck: deck
 ]
 
 { #category : 'configuring' }
@@ -63,8 +64,7 @@ GameBuilder >> cells: anAmount [
 { #category : 'configuring' }
 GameBuilder >> deck: cards [
 
-	cardManager := FixCardManager creation.
-	cardManager addCardsToDeck: cards
+	deck := FixedDeck with: cards
 ]
 
 { #category : 'configuring' }
@@ -105,7 +105,7 @@ GameBuilder >> initialize [
 	effectsGenerator := [ :amount | Array new: amount withAll: NoEffect new ].
 	length := Distance parsecs: 20.
 	laps := 1.
-	cardManager := CardManager creation
+	deck := RandomDeck new
 ]
 
 { #category : 'configuring' }

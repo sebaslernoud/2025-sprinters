@@ -4,16 +4,17 @@ Class {
 	#instVars : [
 		'deck',
 		'activeCards',
-		'discardPile'
+		'discardPile',
+		'hands'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'accessing' }
-CardManager class >> creation [
+{ #category : 'instance creation' }
+CardManager class >> with: aDeck [
 
-	^ self new initialization
+	^ self new initializeWith: aDeck
 ]
 
 { #category : 'as yet unclassified' }
@@ -48,42 +49,22 @@ CardManager >> cancelCard: aCard [
 	activeCards remove: card
 ]
 
-{ #category : 'accessing' }
-CardManager >> deck [
+{ #category : 'dealing' }
+CardManager >> dealInitialCardsTo: aShip [
 
-	^ deck
+	2 timesRepeat: [ self giveCardTo: aShip ]
 ]
 
-{ #category : 'as yet unclassified' }
-CardManager >> drawCard [
+{ #category : 'dealing' }
+CardManager >> giveCardTo: aShip [
 
-	| index randomCard typeOfCards |
-	typeOfCards := {
-		               AccelerationCard.
-		               SpeedCard.
-		               CancellationCard.
-		               MercenaryCard.
-		               RedoCard.
-		               RepeatCard.
-		               SpeedCard }.
-	index := Random new nextIntegerBetween: 1 and: typeOfCards size.
-	randomCard := (typeOfCards at: index) new.
-	^ randomCard
+	(self handOf: aShip) add: deck draw
 ]
 
-{ #category : 'as yet unclassified' }
-CardManager >> drawCardOn: aShip [
+{ #category : 'dealing' }
+CardManager >> handOf: aShip [
 
-	| card |
-	card := self drawCard.
-	aShip receiveCard: card
-]
-
-{ #category : 'as yet unclassified' }
-CardManager >> drawInitialCardsFor: aShip [
-
-	self drawCardOn: aShip.
-	self drawCardOn: aShip
+	^ hands at: aShip ifAbsentPut: [ OrderedCollection new ]
 ]
 
 { #category : 'testing' }
@@ -93,11 +74,12 @@ CardManager >> hasActiveCard: aCard [
 ]
 
 { #category : 'initialization' }
-CardManager >> initialization [
+CardManager >> initializeWith: aDeck [
 
-	deck := OrderedCollection new.
-	discardPile :=OrderedCollection new.
+	deck := aDeck.
+	hands := IdentityDictionary new.
 	activeCards := OrderedCollection new.
+	discardPile := OrderedCollection new
 ]
 
 { #category : 'testing' }
@@ -109,16 +91,14 @@ CardManager >> isValidMercenary: aShip in: ships [
 { #category : 'as yet unclassified' }
 CardManager >> playCard: aCard by: aShip target: aShip2 in: aGame [
 
-	(aShip hasCard: aCard) ifFalse: [
+	((self handOf: aShip) includes: aCard) ifFalse: [
 		Error signal: 'Cannot play a card you do not have' ].
-
 	(aCard isCancellationCard and: [ self activePermanentCards isEmpty ])
 		ifTrue: [
 			self error:
 				'Cannot play cancellation card with no active permanent cards' ].
-
 	aCard applyTo: aShip using: aShip2 in: aGame.
-	aShip removeCard: aCard.
+	(self handOf: aShip) remove: aCard.
 	self registerCard: aCard
 ]
 

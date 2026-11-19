@@ -24,7 +24,7 @@ Game class >> validateUniqueNames: shipNames [
 ]
 
 { #category : 'as yet unclassified' }
-Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames cardManager: aCardManager [
+Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames deck: aDeck [
 
 	shipNames ifEmpty: [ ^ Error signal: 'List of ships must not be empty.' ].
 	self validateUniqueNames: shipNames.
@@ -32,7 +32,7 @@ Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames cardManag
 		  initializeWith: aBoard
 		  using: aDiceBucket
 		  andShipsNamed: shipNames
-		  cardManager: aCardManager
+		  deck: aDeck
 ]
 
 { #category : 'playing' }
@@ -44,6 +44,12 @@ Game >> applyAccelerationCardEffect [
 Game >> cardManager [
 
 	^ cardManager
+]
+
+{ #category : 'accessing' }
+Game >> cardsOf: aShipName [
+
+	^ (cardManager handOf: (self findShipBy: aShipName)) copy
 ]
 
 { #category : 'converting' }
@@ -97,8 +103,14 @@ Game >> finish [
 	status := Finished new
 ]
 
+{ #category : 'dealing' }
+Game >> giveCardTo: aShip [
+
+	cardManager giveCardTo: aShip
+]
+
 { #category : 'initialization' }
-Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames cardManager: aCardManager [
+Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames deck: aDeck [
 
 	board := aBoard.
 	ships := shipNames collect: [ :shipName | Ship create: shipName ].
@@ -107,8 +119,8 @@ Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames cardM
 	turnManager := TurnManager with: ships.
 	battleManager := BattleManager with: aDiceBucket.
 	effectManager := EffectManager creation.
-	cardManager := aCardManager.
-	ships do: [ :ship | cardManager drawInitialCardsFor: ship ]
+	cardManager := CardManager with: aDeck.
+	ships do: [ :ship | cardManager dealInitialCardsTo: ship ]
 ]
 
 { #category : 'playing' }

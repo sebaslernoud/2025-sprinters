@@ -8,12 +8,21 @@ Class {
 { #category : 'tests' }
 CardTest >> test000WhenGameStartsThenEachShipHasTwoCards [
 
-	| aGame |
+	| speedCard redoCard repeatCard accelerationCard aGame |
+	speedCard := SpeedCard new.
+	redoCard := RedoCard new.
+	repeatCard := RepeatCard new.
+	accelerationCard := AccelerationCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         deck: { speedCard. redoCard. repeatCard. accelerationCard };
 		         build.
-	self assert: (aGame findShipBy: 'ship 1') cards size equals: 2.
-	self assert: (aGame findShipBy: 'ship 2') cards size equals: 2
+	self
+		assert: (aGame cardsOf: 'ship 1')
+		equals: (OrderedCollection with: speedCard with: redoCard).
+	self
+		assert: (aGame cardsOf: 'ship 2')
+		equals: (OrderedCollection with: repeatCard with: accelerationCard)
 ]
 
 { #category : 'tests' }
@@ -76,7 +85,7 @@ CardTest >> test004WhenAShipUseSpeedCardThenIsRemovedFromDeckOfShip [
 		         deck: { speedCard. SpeedCard new };
 		         build.
 	aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1'.
-	self assert: (aGame findShipBy: 'ship 1') cards size equals: 1
+	self assert: (aGame cardsOf: 'ship 1') size equals: 1
 ]
 
 { #category : 'tests' }
@@ -315,7 +324,7 @@ CardTest >> test017WhenTheShipMovesThrowTheBoardAndITACrdGiverCellThenShipReciev
 		         deck: { RepeatCard new. AccelerationCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
 	aGame playTurn. "ship 1 cae en 4 (CardGiver) y recibe la 5ta carta del mazo"
-	self assert: (aGame findShipBy: 'ship 1') cards size equals: 3
+	self assert: (aGame cardsOf: 'ship 1') size equals: 3
 ]
 
 { #category : 'tests' }
@@ -332,7 +341,7 @@ CardTest >> test018WhenShipUseRepeatCardAndLastEffectWasaCardGiverThenItDoesNotR
 		         build.
 	aGame playTurn. "ship 1 cae en 4 (CardGiver)"
 	aGame shipNamed: 'ship 1' useCard: repeatCard with: 'ship 2'.
-	self assert: (aGame findShipBy: 'ship 2') cards size equals: 2
+	self assert: (aGame cardsOf: 'ship 2') size equals: 2
 ]
 
 { #category : 'tests' }
@@ -351,4 +360,15 @@ CardTest >> test019WhenShipFightToAnotherShipButHasBonusThrowThenItCanWin [
 	aGame playTurn. "ship 2 cae en 4 y pelea: ship 2 saca 3; ship 1 saca 3 + 1 = 4"
 	self assert: (aGame findShipBy: 'ship 2') shields equals: 2.
 	self assert: (aGame findShipBy: 'ship 1') shields equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test020WhenModifyingTheCardsOfAShipFromOutsideThenItsHandDoesNotChange [
+
+	| aGame |
+	aGame := GameBuilder new
+		         deck: { SpeedCard new. RedoCard new };
+		         build.
+	(aGame cardsOf: 'ship 1') removeAll.
+	self assert: (aGame cardsOf: 'ship 1') size equals: 2
 ]

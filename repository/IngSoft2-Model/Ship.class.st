@@ -33,12 +33,6 @@ Ship >> bonusThrow [
 ]
 
 { #category : 'playing' }
-Ship >> cards [
-
-	^ state cards
-]
-
-{ #category : 'playing' }
 Ship >> decreaseBonusThrow [
 
 	state decreaseBonus
@@ -48,12 +42,6 @@ Ship >> decreaseBonusThrow [
 Ship >> hasAsMercery: aShip [
 
 	^ state checkIfIHaveAsMercery: aShip
-]
-
-{ #category : 'testing' }
-Ship >> hasCard: aCard [
-
-	^ state hasThisCard: aCard
 ]
 
 { #category : 'playing' }
@@ -129,18 +117,6 @@ Ship >> name [
 Ship >> position [
 
 	^ location cell
-]
-
-{ #category : 'playing' }
-Ship >> receiveCard: aCard [
-
-	state add: aCard
-]
-
-{ #category : 'removing' }
-Ship >> removeCard: aCard [
-
-	state removeCard: aCard
 ]
 
 { #category : 'removing' }

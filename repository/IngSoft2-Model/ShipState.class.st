@@ -3,8 +3,7 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'bonusThrow',
-		'mercenaries',
-		'cards'
+		'mercenaries'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -17,12 +16,6 @@ ShipState class >> creation [
 ]
 
 { #category : 'adding' }
-ShipState >> add: aCard [
-
-	cards add: aCard
-]
-
-{ #category : 'adding' }
 ShipState >> addMercenary: aShip [
 
 	mercenaries add: aShip
@@ -32,12 +25,6 @@ ShipState >> addMercenary: aShip [
 ShipState >> bonusThrow [
 
 	^ bonusThrow
-]
-
-{ #category : 'accessing' }
-ShipState >> cards [
-
-	^ cards
 ]
 
 { #category : 'as yet unclassified' }
@@ -53,12 +40,6 @@ ShipState >> decreaseBonus [
 ]
 
 { #category : 'as yet unclassified' }
-ShipState >> hasThisCard: aCard [
-
-	^ cards anySatisfy: [ :card | card = aCard ]
-]
-
-{ #category : 'as yet unclassified' }
 ShipState >> increaseBonus [
 
 	bonusThrow := bonusThrow + 1
@@ -68,8 +49,7 @@ ShipState >> increaseBonus [
 ShipState >> initialization [
 
 	bonusThrow := 0.
-	mercenaries := OrderedCollection new.
-	cards := OrderedCollection new
+	mercenaries := OrderedCollection new
 ]
 
 { #category : 'accessing' }
@@ -86,12 +66,6 @@ ShipState >> payHelpToMyMercenariesWith: aDiceBucket [
 	mercenaries do: [ :ship |
 		count := count + (ship helpToFightWith: aDiceBucket) ].
 	^ count + bonusThrow
-]
-
-{ #category : 'removing' }
-ShipState >> removeCard: aCard [
-
-	cards remove: aCard
 ]
 
 { #category : 'removing' }

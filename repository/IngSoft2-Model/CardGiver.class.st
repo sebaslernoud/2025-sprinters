@@ -8,7 +8,7 @@ Class {
 { #category : 'playing' }
 CardGiver >> applyTo: aShip in: aGame [
 
-	aGame cardManager drawCardOn: aShip
+	aGame giveCardTo: aShip
 ]
 
 { #category : 'testing' }

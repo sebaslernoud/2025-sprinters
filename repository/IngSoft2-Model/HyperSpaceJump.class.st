@@ -9,6 +9,5 @@ Class {
 HyperSpaceJump >> applyTo: aShip in: aGame [
 
 	aGame move: aShip by: 4.
-	aShip loseShield
-
+	aGame damage: aShip
 ]

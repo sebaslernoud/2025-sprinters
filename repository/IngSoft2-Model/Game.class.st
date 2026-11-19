@@ -59,9 +59,24 @@ Game >> currentTopPlayer [
 ]
 
 { #category : 'as yet unclassified' }
+Game >> damage: aShip [
+
+	aShip loseShield.
+	aShip isDefenseless ifTrue: [ self penalize: aShip ]
+]
+
+{ #category : 'as yet unclassified' }
 Game >> damageAllShips [
 
-	ships do: [ :ship | ship loseShield ]
+	ships do: [ :ship | self damage: ship ]
+]
+
+{ #category : 'battle' }
+Game >> defeat: aShip [
+
+	board moveToStart: aShip.
+	self damage: aShip.
+	aShip mercenaries do: [ :mercenary | self damage: mercenary ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -113,6 +128,13 @@ Game >> moveAllShipsExcept: aShip by: anAmountOfCells [
 
 	(ships copyWithout: aShip) do: [ :ship |
 		board move: ship by: anAmountOfCells ]
+]
+
+{ #category : 'private' }
+Game >> penalize: aShip [
+
+	turnManager penalize: aShip turns: 2.
+	aShip restoreShields
 ]
 
 { #category : 'playing' }
@@ -198,9 +220,16 @@ Game >> showWinner [
 	^ status showWinner: self
 ]
 
+{ #category : 'private' }
+Game >> skipNextTurn [
+
+	turnManager nextShip restoreShields
+]
+
 { #category : 'playing' }
-Game >> skipTurnForShipNamed: shipName [ 
-	turnManager skipTurnForShipNamed: shipName.
+Game >> skipTurn [
+
+	status skipTurnOf: self
 ]
 
 { #category : 'playing' }

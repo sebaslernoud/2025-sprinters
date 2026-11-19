@@ -95,3 +95,20 @@ GameStateTest >> test012WhenGameHasFinishedThenCardsCanNotBePlayed [
 				assert: error messageText
 				equals: 'Cards can not be played once the game has finished' ]
 ]
+
+{ #category : 'tests' }
+GameStateTest >> test013WhenGameHasFinishedThenSkipTurnRaiseError [
+
+	| aGame |
+	aGame := GameBuilder new
+		         diceSequence: #( 10 );
+		         build.
+	aGame play.
+	self
+		should: [ aGame skipTurn ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'The game has already been played, you can not play any more.' ]
+]

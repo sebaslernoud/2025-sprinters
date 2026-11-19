@@ -132,79 +132,34 @@ ShipTest >> test009WhenShipIsCreatedAndThenLoseAShieldThenShipShieldsAre2 [
 { #category : 'tests' }
 ShipTest >> test010WhenShipRecoverItsShieldsThenShipShieldsAre3 [
 
-	| ship1  |
+	| ship1 |
 	ship1 := Ship create: 'Ship1'.
-	ship1 recoverShields.
+	ship1 loseShield.
+	ship1 restoreShields.
 	self assert: ship1 shields equals: 3
 ]
 
 { #category : 'tests' }
-ShipTest >> test011WhenShipIsCreatedThenItCanPlay [
+ShipTest >> test016WhenShipInTurnSkipsItsTurnThenItRecoversItsShieldsAndDoesNotMove [
 
-	| ship1  |
-	ship1 := Ship create: 'Ship1'.
-	self assert: ship1 canPlay equals: true
-]
-
-{ #category : 'tests' }
-ShipTest >> test012WhenShipLoseAllItsShieldsThenItCanNotPlay [
-
-	| ship1  |
-	ship1 := Ship create: 'Ship1'.
-	ship1 loseShield .
-	ship1 loseShield .
-	ship1 loseShield .
-	self assert: ship1 canPlay equals: false
-]
-
-{ #category : 'tests' }
-ShipTest >> test013WhenShipRecoverItsShieldsThenItCanPlay [
-
-	| ship1  |
-	ship1 := Ship create: 'Ship1'.
-	ship1 loseShield .
-	ship1 loseShield .
-	ship1 loseShield .
-	ship1 recoverShields .
-	self assert: ship1 canPlay equals: true
-]
-
-{ #category : 'tests' }
-ShipTest >> test014WhenShipHas2TurnToSkipAndHAsSkipped1TurnThenItHas1TurnToSkip [
-
-	| ship1 ships ship2 ship3 turnManager actualShip |
-	ships := OrderedCollection new.
-	ship1 := Ship create: 'ship1'.
-	ship2 := Ship create: 'ship2'.
-	ship3 := Ship create: 'ship3'.
-	ships add: ship1.
-	ships add: ship2.
-	ships add: ship3.
-	ship1 loseShield.
-	ship1 loseShield.
-	ship1 loseShield.
-	turnManager := TurnManager with: ships.
-	actualShip := turnManager nextShip.
-	self assert: ship1 turnsThatHasToSkip equals: 1
-]
-
-{ #category : 'tests' }
-ShipTest >> test016WhenShipChoiceToNotPlayThenShipRecoverShield [
-
-	| aGame |
+	| aGame ship1 ship2 |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
-		         diceSequence: #( 5 3 );
+		         diceSequence: #( 5 2 );
 		         allCellsWith: HyperSpaceJump new;
+		         wormHoleBetween: 9 and: 10;
 		         laps: 3;
 		         build.
-	aGame playTurn. "Ship 1 -- 10, 2 escudos (-1) por usar hyperspacejump"
-	aGame playTurn. "Ship 2 -- 4"
-	aGame playTurn. "Ship 1 -- 1,lap2"
-	aGame playTurn. "Ship 2 -- 7"
-	aGame skipTurnForShipNamed: 'ship 1'.
-	aGame playTurn. "Ship 2 -- 2,lap2"
-	self assert: (aGame findShipBy: 'ship 1') shields equals: 3 .
+	ship1 := aGame findShipBy: 'ship 1'.
+	ship2 := aGame findShipBy: 'ship 2'.
+	aGame playTurn. "ship 1: cae en 6 (HyperSpaceJump) -> 10, le quedan 2 escudos"
+	aGame playTurn. "ship 2: cae en 3 (HyperSpaceJump) -> 7, le quedan 2 escudos"
+	aGame skipTurn. "le toca a ship 1: no tira y recupera sus escudos"
+	aGame playTurn. "le toca a ship 2: 7 + 5 = celda 2 de la vuelta 2 (HyperSpaceJump) -> 6"
+	self assert: ship1 shields equals: 3.
+	self assert: ship1 position equals: 10.
+	self assert: ship2 position equals: 6.
+	self assert: ship2 laps equals: 2
 ]
 
 { #category : 'tests' }

@@ -64,55 +64,14 @@ TurnManagerTest >> test003WhenShipsAreEmptyThenRaiseError [
 ]
 
 { #category : 'tests' }
-TurnManagerTest >> test004WhenShip1DoesNotWantsToPlayThenReturnShip2 [
+TurnManagerTest >> test006WhenShip1IsPenalizedThenNextPlayableShipIsShip2 [
 
-	| ships ship1 ship2 turnManager actualShip |
-	ships := OrderedCollection new.
+	| ship1 ship2 turnManager |
 	ship1 := Ship create: 'ship1'.
 	ship2 := Ship create: 'ship2'.
-	ships add: ship1.
-	ships add: ship2.
-	turnManager := TurnManager with: ships.
-	turnManager skipTurnForShipNamed: 'ship1'.
-	actualShip := turnManager nextShip.
-	self assert: actualShip name equals: 'ship2'
-]
-
-{ #category : 'tests' }
-TurnManagerTest >> test005WhenShip1andShip2DoNotWantsToPlayThenReturnShip3 [
-
-	| ships ship1 ship2 turnManager actualShip ship3 |
-	ships := OrderedCollection new.
-	ship1 := Ship create: 'ship1'.
-	ship2 := Ship create: 'ship2'.
-	ship3 := Ship create: 'ship3'.
-	ships add: ship1.
-	ships add: ship2.
-	ships add: ship3.
-	turnManager := TurnManager with: ships.
-	turnManager skipTurnForShipNamed: 'ship1'.
-	turnManager skipTurnForShipNamed: 'ship2'.
-	actualShip := turnManager nextShip.
-	self assert: actualShip name equals: 'ship3'
-]
-
-{ #category : 'tests' }
-TurnManagerTest >> test006WhenShip1CanNotPlayThenNextPlayableShipIsShip2 [
-
-	| ships ship1 ship2 turnManager actualShip ship3 |
-	ships := OrderedCollection new.
-	ship1 := Ship create: 'ship1'.
-	ship2 := Ship create: 'ship2'.
-	ship3 := Ship create: 'ship3'.
-	ships add: ship1.
-	ships add: ship2.
-	ships add: ship3.
-	ship1 loseShield.
-	ship1 loseShield.
-	ship1 loseShield.
-	turnManager := TurnManager with: ships.
-	actualShip := turnManager nextShip.
-	self assert: actualShip name equals: 'ship2'
+	turnManager := TurnManager with: { ship1. ship2 }.
+	turnManager penalize: ship1 turns: 2.
+	self assert: turnManager nextShip equals: ship2
 ]
 
 { #category : 'tests' }
@@ -121,10 +80,24 @@ TurnManagerTest >> test008WhenAllShipsCanNotPlayThenTheyLoseTheirTurnsUntilOneCa
 	| ship1 ship2 turnManager |
 	ship1 := Ship create: 'ship1'.
 	ship2 := Ship create: 'ship2'.
-	3 timesRepeat: [ ship1 loseShield ].
-	3 timesRepeat: [ ship2 loseShield ].
 	turnManager := TurnManager with: { ship1. ship2 }.
-	"Cada una pierde sus 2 turnos y despues vuelven a jugar en orden"
+	turnManager penalize: ship1 turns: 2.
+	turnManager penalize: ship2 turns: 2.
 	self assert: turnManager nextShip equals: ship1.
 	self assert: turnManager nextShip equals: ship2
+]
+
+{ #category : 'tests' }
+TurnManagerTest >> test009WhenAPenalizedShipHasLostItsTurnsThenItPlaysAgain [
+
+	| ship1 ship2 ship3 turnManager playedShips |
+	ship1 := Ship create: 'ship1'.
+	ship2 := Ship create: 'ship2'.
+	ship3 := Ship create: 'ship3'.
+	turnManager := TurnManager with: { ship1. ship2. ship3 }.
+	turnManager penalize: ship1 turns: 2.
+	playedShips := (1 to: 5) collect: [ :turn | turnManager nextShip name ].
+	self
+		assert: playedShips
+		equals: #( 'ship2' 'ship3' 'ship2' 'ship3' 'ship1' )
 ]

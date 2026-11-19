@@ -42,3 +42,9 @@ Started >> showWinner: aGame [
 
 	^ Error signal: 'The game is not finished, so it hasn´t a winner yet'
 ]
+
+{ #category : 'as yet unclassified' }
+Started >> skipTurnOf: aGame [
+
+	aGame skipNextTurn
+]

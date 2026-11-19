@@ -2,12 +2,9 @@ Class {
 	#name : 'ShipState',
 	#superclass : 'Object',
 	#instVars : [
-		'turnsToSkip',
-		'optionalTurn',
 		'bonusThrow',
 		'mercenaries',
-		'cards',
-		'shields'
+		'cards'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -37,12 +34,6 @@ ShipState >> bonusThrow [
 	^ bonusThrow
 ]
 
-{ #category : 'testing' }
-ShipState >> canIPlay [
-
-	^ turnsToSkip = 0
-]
-
 { #category : 'accessing' }
 ShipState >> cards [
 
@@ -53,13 +44,6 @@ ShipState >> cards [
 ShipState >> checkIfIHaveAsMercery: aShip [
 
 	^ mercenaries anySatisfy: [ :ship | aShip = ship ]
-]
-
-{ #category : 'as yet unclassified' }
-ShipState >> chooseToNotPlay [
-
-	self recoverShields.
-	turnsToSkip := turnsToSkip + 1
 ]
 
 { #category : 'as yet unclassified' }
@@ -83,35 +67,15 @@ ShipState >> increaseBonus [
 { #category : 'initialization' }
 ShipState >> initialization [
 
-	turnsToSkip := 0.
-	optionalTurn := true.
 	bonusThrow := 0.
 	mercenaries := OrderedCollection new.
-	shields := 3.
 	cards := OrderedCollection new
 ]
 
-{ #category : 'as yet unclassified' }
-ShipState >> loseFight [
-
-	mercenaries do: [ :mercenaryShip | mercenaryShip loseShield ].
-	self loseShield
-]
-
-{ #category : 'playing' }
-ShipState >> loseShield [
-
-	shields := shields - 1.
-	shields = 0 ifFalse: [ ^ self ].
-
-	self recoverShields.
-	turnsToSkip := 2
-]
-
 { #category : 'accessing' }
-ShipState >> optionalTurn [
+ShipState >> mercenaries [
 
-	^ optionalTurn
+	^ mercenaries
 ]
 
 { #category : 'as yet unclassified' }
@@ -124,20 +88,6 @@ ShipState >> payHelpToMyMercenariesWith: aDiceBucket [
 	^ count + bonusThrow
 ]
 
-{ #category : 'playing' }
-ShipState >> recoverShields [
-
-	shields := 3.
-	turnsToSkip :=0.
-	optionalTurn :=true.
-]
-
-{ #category : 'as yet unclassified' }
-ShipState >> reduceTurnsToSkip [
-
-	turnsToSkip := turnsToSkip - 1
-]
-
 { #category : 'removing' }
 ShipState >> removeCard: aCard [
 
@@ -148,16 +98,4 @@ ShipState >> removeCard: aCard [
 ShipState >> removeMercenaries: aShip [
 
 	mercenaries remove: aShip
-]
-
-{ #category : 'accessing' }
-ShipState >> shields [
-
-	^ shields
-]
-
-{ #category : 'accessing' }
-ShipState >> turnsToSkip [
-
-	^ turnsToSkip
 ]

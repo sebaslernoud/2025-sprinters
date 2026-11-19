@@ -8,11 +8,17 @@ Class {
 { #category : 'tests' }
 BattleManagerTest >> test001WhenTwoShipsFightAndShip2WinsThenShip1LoseBatle [
 
-	| ship1 ship2 battleManager |
-	ship1 := Ship create: 'ship 1'.
-	ship2 := Ship create: 'ship 2'.
-	battleManager := BattleManager with: (DiceBucket with: { LoadedDice withSequence: #( 6 9 ) }).
-	battleManager fightBetween: ship1 and: ship2. "ship 1 saca 6, ship 2 saca 9"
+	| aGame ship1 ship2 |
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 3 3 9 6 );
+		         wormHoleBetween: 9 and: 10;
+		         build.
+	aGame playTurn. "ship 1 cae en 4"
+	aGame playTurn. "ship 2 cae en 4 y pelean: ship 2 saca 9, ship 1 saca 6"
+	ship1 := aGame findShipBy: 'ship 1'.
+	ship2 := aGame findShipBy: 'ship 2'.
 	self assert: ship1 shields equals: 2.
+	self assert: ship1 position equals: 1.
 	self assert: ship2 shields equals: 3
 ]

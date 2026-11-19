@@ -42,3 +42,10 @@ Finished >> showWinner: aGame [
 
 	^ aGame currentTopPlayer
 ]
+
+{ #category : 'as yet unclassified' }
+Finished >> skipTurnOf: aGame [
+
+	^ Error signal:
+		  'The game has already been played, you can not play any more.'
+]

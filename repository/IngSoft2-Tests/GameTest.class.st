@@ -291,3 +291,34 @@ GameTest >> test018WhenShipReachesTheFinishThenItWinsEvenIfTheCellHasAnEffect [
 	self assert: aGame showWinner name equals: 'ship 1'.
 	self assert: (aGame findShipBy: 'ship 1') position equals: 10
 ]
+
+{ #category : 'tests' }
+GameTest >> test019WhenShipLosesAllItsShieldsThenItLosesTwoTurns [
+
+	| effects aGame ship1 ship2 |
+	effects := (1 to: 30) collect: [ :cell | NoEffect new ].
+	effects at: 2 put: HyperSpaceJump new.
+	effects at: 7 put: HyperSpaceJump new.
+	effects at: 12 put: HyperSpaceJump new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 1 20 1 1 1 1 1 1 1 );
+		         effects: effects;
+		         wormHoleBetween: 29 and: 30;
+		         build.
+	ship1 := aGame findShipBy: 'ship 1'.
+	ship2 := aGame findShipBy: 'ship 2'.
+	aGame playTurn. "ship 1: cae en 2 (HyperSpaceJump) -> 6, le quedan 2 escudos"
+	aGame playTurn. "ship 2: cae en 21"
+	aGame playTurn. "ship 1: cae en 7 (HyperSpaceJump) -> 11, le queda 1 escudo"
+	aGame playTurn. "ship 2: 22"
+	aGame playTurn. "ship 1: cae en 12 (HyperSpaceJump) -> 16, se queda sin escudos"
+	aGame playTurn. "ship 2: 23"
+	aGame playTurn. "ship 1 pierde su 1er turno; juega ship 2: 24"
+	aGame playTurn. "ship 1 pierde su 2do turno; juega ship 2: 25"
+	self assert: ship1 position equals: 16.
+	self assert: ship1 shields equals: 3.
+	self assert: ship2 position equals: 25.
+	aGame playTurn. "ship 1 vuelve a jugar"
+	self assert: ship1 position equals: 17
+]

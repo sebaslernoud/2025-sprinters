@@ -15,17 +15,16 @@ BattleManager class >> with: aDiceBucket [
 ]
 
 { #category : 'playing' }
-BattleManager >> fightBetween: shipA and: shipB [
+BattleManager >> fightBetween: shipA and: shipB in: aGame [
 
 	| resultA resultB |
 	[
 	resultA := shipA throwDicesWith: diceBucket.
 	resultB := shipB throwDicesWith: diceBucket.
 	resultA = resultB ] whileTrue.
-
-	resultA > resultB
-		ifTrue: [ shipB loseFight ]
-		ifFalse: [ shipA loseFight ]
+	aGame defeat: (resultA > resultB
+			 ifTrue: [ shipB ]
+			 ifFalse: [ shipA ])
 ]
 
 { #category : 'initialization' }
@@ -44,5 +43,5 @@ BattleManager >> resolveIfNeededAt: actualShip in: aGame [
 	shipsInSameLocation do: [ :enemy |
 		((actualShip hasAsMercery: enemy) or: [
 			 enemy hasAsMercery: actualShip ]) ifFalse: [
-			self fightBetween: actualShip and: enemy ] ]
+			self fightBetween: actualShip and: enemy in: aGame ] ]
 ]

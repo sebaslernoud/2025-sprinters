@@ -3,7 +3,8 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'ships',
-		'turn'
+		'turn',
+		'penalties'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -17,17 +18,18 @@ TurnManager class >> with: ships [
 	^ self new initializeWith: ships
 ]
 
-{ #category : 'accessing' }
-TurnManager >> findShipBy: shipName [
-
-	^ ships detect: [ :ship | ship name = shipName ]
-]
-
 { #category : 'initialization' }
 TurnManager >> initializeWith: shipCollection [
 
 	turn := 1.
-	ships := shipCollection
+	ships := shipCollection.
+	penalties := IdentityDictionary new
+]
+
+{ #category : 'private' }
+TurnManager >> isPenalized: aShip [
+
+	^ (penalties at: aShip ifAbsent: [ 0 ]) > 0
 ]
 
 { #category : 'playing' }
@@ -35,10 +37,22 @@ TurnManager >> nextShip [
 
 	| ship |
 	ship := self shipInTurnOrder.
-	[ ship canPlay and: [ ship wantsToPlay ] ] whileFalse: [
-		ship skipTurn.
+	[ self isPenalized: ship ] whileTrue: [
+		self servePenaltyOf: ship.
 		ship := self shipInTurnOrder ].
 	^ ship
+]
+
+{ #category : 'penalizing' }
+TurnManager >> penalize: aShip turns: anAmountOfTurns [
+
+	penalties at: aShip put: anAmountOfTurns
+]
+
+{ #category : 'private' }
+TurnManager >> servePenaltyOf: aShip [
+
+	penalties at: aShip put: (penalties at: aShip) - 1
 ]
 
 { #category : 'as yet unclassified' }
@@ -48,11 +62,4 @@ TurnManager >> shipInTurnOrder [
 	ship := ships at: turn.
 	turn := turn \\ ships size + 1.
 	^ ship
-]
-
-{ #category : 'playing' }
-TurnManager >> skipTurnForShipNamed: shipName [	
-	| shipFound |
-	shipFound := self findShipBy: shipName.
-	shipFound choiceToNotPlay.
 ]

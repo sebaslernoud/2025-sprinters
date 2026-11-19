@@ -2,11 +2,10 @@ Class {
 	#name : 'Ship',
 	#superclass : 'Object',
 	#instVars : [
-		'position',
 		'name',
-		'currentLap',
 		'state',
-		'location'
+		'location',
+		'shields'
 	],
 	#category : 'IngSoft2-Model',
 	#package : 'IngSoft2-Model'
@@ -46,12 +45,6 @@ Ship >> cards [
 ]
 
 { #category : 'playing' }
-Ship >> choiceToNotPlay [
-
-	^ state chooseToNotPlay
-]
-
-{ #category : 'playing' }
 Ship >> decreaseBonusThrow [
 
 	state decreaseBonus
@@ -86,6 +79,7 @@ Ship >> initializeWith: aName [
 
 	name := aName.
 	location := Location cell: 1 lap: 1.
+	shields := Shields full.
 	state := ShipState creation
 ]
 
@@ -93,6 +87,12 @@ Ship >> initializeWith: aName [
 Ship >> isAheadOf: anotherShip [
 
 	^ location isAheadOf: anotherShip location
+]
+
+{ #category : 'testing' }
+Ship >> isDefenseless [
+
+	^ shields isDepleted
 ]
 
 { #category : 'accessing' }
@@ -108,16 +108,15 @@ Ship >> location [
 ]
 
 { #category : 'playing' }
-Ship >> loseFight [
-
-	self moveTo: location atStart.
-	state loseFight
-]
-
-{ #category : 'playing' }
 Ship >> loseShield [
 
-	state loseShield
+	shields lose
+]
+
+{ #category : 'as yet unclassified' }
+Ship >> mercenaries [
+
+	^ state mercenaries
 ]
 
 { #category : 'path commands' }
@@ -144,12 +143,6 @@ Ship >> receiveCard: aCard [
 	state add: aCard
 ]
 
-{ #category : 'playing' }
-Ship >> recoverShields [
-
-	state recoverShields
-]
-
 { #category : 'removing' }
 Ship >> removeCard: aCard [
 
@@ -162,16 +155,16 @@ Ship >> removeMercenary: aShip [
 	state removeMercenaries: aShip
 ]
 
+{ #category : 'as yet unclassified' }
+Ship >> restoreShields [
+
+	shields restore
+]
+
 { #category : 'accessing' }
 Ship >> shields [
 
-	^ state shields
-]
-
-{ #category : 'playing' }
-Ship >> skipTurn [
-
-	state reduceTurnsToSkip
+	^ shields amount
 ]
 
 { #category : 'playing' }
@@ -181,12 +174,6 @@ Ship >> throwDicesWith: aDiceBucket [
 	result := aDiceBucket throw.
 	helper := state payHelpToMyMercenariesWith: aDiceBucket.
 	^ result + helper
-]
-
-{ #category : 'accessing' }
-Ship >> turnsThatHasToSkip [
-
-	^ state turnsToSkip
 ]
 
 { #category : 'accessing' }

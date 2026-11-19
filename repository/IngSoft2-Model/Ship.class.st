@@ -32,12 +32,6 @@ Ship >> bonusThrow [
 	^ state bonusThrow
 ]
 
-{ #category : 'testing' }
-Ship >> canPlay [
-
-	^ state canIPlay
-]
-
 { #category : 'playing' }
 Ship >> cards [
 
@@ -174,12 +168,6 @@ Ship >> throwDicesWith: aDiceBucket [
 	result := aDiceBucket throw.
 	helper := state payHelpToMyMercenariesWith: aDiceBucket.
 	^ result + helper
-]
-
-{ #category : 'accessing' }
-Ship >> wantsToPlay [
-
-	^ state optionalTurn
 ]
 
 { #category : 'playing' }

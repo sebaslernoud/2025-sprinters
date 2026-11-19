@@ -9,7 +9,8 @@ SmalltalkCISpec {
   ],
   #testing : {
     #coverage : {
-       #packages : [ 'IngSoft2-Model' ]
+       #packages : [ 'IngSoft2-Model' ],
+       #format : #lcov
     },
     #include : {
        #packages : [ 'IngSoft2-Tests' ]

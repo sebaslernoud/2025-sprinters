@@ -1,7 +1,7 @@
 # Ingenieria del Software II - Template
 
-![GHA Status](https://github.com/uca-argentina/2025-sprinters/actions/workflows/GHA.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/github/uca-argentina/2025-sprinters/badge.svg?branch=master)](https://coveralls.io/github/uca-argentina/2025-sprinters?branch=master)
+![GHA Status](https://github.com/sebaslernoud/2025-sprinters/actions/workflows/GHA.yml/badge.svg)
+[![Coverage Status](https://coveralls.io/repos/github/sebaslernoud/2025-sprinters/badge.svg?branch=master)](https://coveralls.io/github/sebaslernoud/2025-sprinters?branch=master)
 
 ## Metacello
 

@@ -20,5 +20,5 @@ BattleManagerTest >> test001WhenTwoShipsFightAndShip2WinsThenShip1LoseBatle [
 	ship2 := aGame findShipBy: 'ship 2'.
 	self assert: ship1 shields equals: 2.
 	self assert: ship1 position equals: 1.
-	self assert: ship2 shields equals: 3
+	self assert: ship2 shields equals: 3 "REMOVE ME"
 ]

@@ -56,6 +56,20 @@ TurnManager >> servePenaltyOf: aShip [
 ]
 
 { #category : 'as yet unclassified' }
+TurnManager >> shipInTurn [
+
+	| simulatedTurn simulatedPenalties ship |
+	simulatedTurn := turn.
+	simulatedPenalties := penalties copy.
+	[
+	ship := ships at: simulatedTurn.
+	(simulatedPenalties at: ship ifAbsent: [ 0 ]) > 0 ] whileTrue: [
+		simulatedPenalties at: ship put: (simulatedPenalties at: ship) - 1.
+		simulatedTurn := simulatedTurn \\ ships size + 1 ].
+	^ ship
+]
+
+{ #category : 'as yet unclassified' }
 TurnManager >> shipInTurnOrder [
 
 	| ship |

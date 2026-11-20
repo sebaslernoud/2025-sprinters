@@ -31,8 +31,8 @@ Finished >> rankingOf: aGame [
 	^ aGame topShipNames
 ]
 
-{ #category : 'playing' }
-Finished >> ship: shipName useCard: aCard with: anotherShipName in: aGame [
+{ #category : 'as yet unclassified' }
+Finished >> ship: aShipName plays: aCard targeting: aTarget in: aGame [
 
 	^ Error signal: 'Cards can not be played once the game has finished'
 ]

@@ -5,26 +5,27 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'testing' }
-Card >> isCancellationCard [
+{ #category : 'as yet unclassified' }
+Card >> applyBy: aShip targeting: aTarget in: aGame [
 
-	^ false
+	self subclassResponsibility
 ]
 
-{ #category : 'testing' }
-Card >> isPermanent [
+{ #category : 'as yet unclassified' }
+Card >> playBy: aShip targeting: aTarget in: aGame [
 
-	^ false
+	self validatePlayBy: aShip in: aGame.
+	self applyBy: aShip targeting: aTarget in: aGame
 ]
 
-{ #category : 'testing' }
-Card >> isRedo [
+{ #category : 'as yet unclassified' }
+Card >> registerIn: aCardManager [
 
-	^ false
+	aCardManager registerPlayed: self
 ]
 
-{ #category : 'testing' }
-Card >> matches: anotherCard [
+{ #category : 'as yet unclassified' }
+Card >> validatePlayBy: aShip in: aGame [
 
-	^ self class = anotherCard class
+	self subclassResponsibility
 ]

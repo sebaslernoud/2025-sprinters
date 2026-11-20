@@ -18,12 +18,6 @@ DiceBucket >> initializeWith: aSetOfDices [
 	bucketOfDices := aSetOfDices.
 ]
 
-{ #category : 'as yet unclassified' }
-DiceBucket >> rollFor: aShip [
-
-	^ self throw + aShip bonusThrow
-]
-
 { #category : 'playing' }
 DiceBucket >> throw [
 

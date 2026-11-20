@@ -88,7 +88,7 @@ GameStateTest >> test012WhenGameHasFinishedThenCardsCanNotBePlayed [
 		         build.
 	aGame play.
 	self
-		should: [ aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1' ]
+		should: [ aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'. ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self

@@ -34,7 +34,7 @@ CardTest >> test001WhenUseSpeedCardFromDeckThenApplyItEffect [
 		         diceSequence: #( 6 );
 		         deck: { speedCard. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'.
 	aGame playTurn. "1 + 6 + 1 de la Speed = 8"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 8
 ]
@@ -47,7 +47,7 @@ CardTest >> test002WhenShipWantsToPlayACardThatItDoesNotHaveThenRaiseError [
 		         deck: { MercenaryCard new. AccelerationCard new };
 		         build.
 	self
-		should: [ aGame shipNamed: 'ship 1' useCard: SpeedCard new with: 'ship 1' ]
+		should: [ aGame ship: 'ship 1' plays: SpeedCard targeting: 'ship 1'. ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self
@@ -65,7 +65,7 @@ CardTest >> test003WhenShipUseMercenaryCardWithShip2ThenTheyDoNotBattle [
 		         diceSequence: #( 6 );
 		         deck: { mercenaryCard. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: mercenaryCard with: 'mercenary'.
+	aGame ship: 'ship 1' plays: mercenaryCard targeting: 'mercenary'.
 	aGame playTurn. "ship 1 cae en 7"
 	aGame playTurn. "mercenary cae en 7: son aliadas, no pelean"
 	ship1 := aGame findShipBy: 'ship 1'.
@@ -84,7 +84,7 @@ CardTest >> test004WhenAShipUseSpeedCardThenIsRemovedFromDeckOfShip [
 	aGame := GameBuilder new
 		         deck: { speedCard. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'.
 	self assert: (aGame cardsOf: 'ship 1') size equals: 1
 ]
 
@@ -99,7 +99,7 @@ CardTest >> test005WhenShip1FightToShip3UsingShip2AsMErcenaryThenShip1WinTheBatt
 		         wormHoleBetween: 9 and: 10;
 		         deck: { mercenaryCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: mercenaryCard with: 'ship 2'.
+	aGame ship: 'ship 1' plays: mercenaryCard targeting: 'ship 2'.
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 cae en 4"
 	aGame playTurn. "ship 3 cae en 3 y pelea: ship 3 saca 5; ship 1 saca 2 + 4 de su mercenaria = 6"
@@ -120,7 +120,7 @@ CardTest >> test006WhenShip1FightToShip3UsingShip2AsMErcenaryAndShip3WonThenShip
 		         wormHoleBetween: 9 and: 10;
 		         deck: { mercenaryCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: mercenaryCard with: 'ship 2'.
+	aGame ship: 'ship 1' plays: mercenaryCard targeting: 'ship 2'.
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 cae en 4"
 	aGame playTurn. "ship 3 cae en 3 y pelea: ship 3 saca 7; ship 1 saca 2 + 4 de su mercenaria = 6"
@@ -137,11 +137,15 @@ CardTest >> test007WhenShip3AndShip1WanttheSameShipAsMercenaryThenRaiseError [
 	mercenaryCard2 := MercenaryCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 1 2 );
+		         wormHoleBetween: 9 and: 10;
 		         deck: { mercenaryCard1. SpeedCard new. SpeedCard new. SpeedCard new. mercenaryCard2. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: mercenaryCard1 with: 'ship 2'.
+	aGame ship: 'ship 1' plays: mercenaryCard1 targeting: 'ship 2'.
+	aGame playTurn. "ship 1 cae en 2"
+	aGame playTurn. "ship 2 cae en 4"
 	self
-		should: [ aGame shipNamed: 'ship 3' useCard: mercenaryCard2 with: 'ship 2' ]
+		should: [ aGame ship: 'ship 3' plays: mercenaryCard2 targeting: 'ship 2' ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self
@@ -160,7 +164,7 @@ CardTest >> test008WhenUseAccelerationCardThenAllThrowsIncrementsBy1 [
 		         wormHoleBetween: 9 and: 10;
 		         deck: { accelerationCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: accelerationCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: accelerationCard.
 	aGame playTurn.
 	aGame playTurn.
 	aGame playTurn.
@@ -174,14 +178,14 @@ CardTest >> test009WhenUseCancellationCardThenRemoveSpeedCard [
 
 	| aGame speedCard cancellationCard |
 	speedCard := SpeedCard new.
-	cancellationCard := CancellationCard newWithCard: SpeedCard new.
+	cancellationCard := CancellationCard new.
 	aGame := GameBuilder new
 		         diceSequence: #( 3 );
 		         wormHoleBetween: 9 and: 10;
 		         deck: { speedCard. cancellationCard };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1'.
-	aGame shipNamed: 'ship 1' useCard: cancellationCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'.
+	aGame ship: 'ship 1' plays: cancellationCard targeting: aGame activeCards first.
 	aGame playTurn. "1 + 3, sin el +1 de la Speed cancelada"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 4
 ]
@@ -191,16 +195,16 @@ CardTest >> test010WhenUseCancellationCardWithAccelerationThenRemoveAcceleration
 
 	| aGame accelerationCard cancellationCard |
 	accelerationCard := AccelerationCard new.
-	cancellationCard := CancellationCard newWithCard: AccelerationCard new.
+	cancellationCard := CancellationCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 1 3 );
 		         wormHoleBetween: 9 and: 10;
 		         deck: { accelerationCard. cancellationCard. AccelerationCard new. AccelerationCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: accelerationCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: accelerationCard.
 	aGame playTurn. "ship 1: 1 + 1 + 1 de la Acceleration = 3"
-	aGame shipNamed: 'ship 1' useCard: cancellationCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: cancellationCard targeting: aGame activeCards first.
 	aGame playTurn. "ship 2: 1 + 3, ya sin Acceleration = 4"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 3.
 	self assert: (aGame findShipBy: 'ship 2') position equals: 4
@@ -211,15 +215,15 @@ CardTest >> test011WhenUseCancellationCardWithMercenaryThenRemoveMercenary [
 
 	| aGame mercenaryCard cancellationCard |
 	mercenaryCard := MercenaryCard new.
-	cancellationCard := CancellationCard newWithCard: mercenaryCard.
+	cancellationCard := CancellationCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
 		         diceSequence: #( 2 1 2 5 3 );
 		         wormHoleBetween: 9 and: 10;
 		         deck: { mercenaryCard. AccelerationCard new. cancellationCard. AccelerationCard new. AccelerationCard new. AccelerationCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: mercenaryCard with: 'ship 3'.
-	aGame shipNamed: 'ship 2' useCard: cancellationCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: mercenaryCard targeting: 'ship 3'.
+	aGame ship: 'ship 2' plays: cancellationCard targeting: aGame activeCards first.
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 cae en 2"
 	aGame playTurn. "ship 3 cae en 3: ya no son aliadas, pelean 5 contra 3"
@@ -232,12 +236,12 @@ CardTest >> test011WhenUseCancellationCardWithMercenaryThenRemoveMercenary [
 CardTest >> test012WhenUseCancellationCardAndNoActiveCardsThenRaiseError [
 
 	| aGame cancellationCard |
-	cancellationCard := CancellationCard newWithCard: SpeedCard new.
+	cancellationCard := CancellationCard new.
 	aGame := GameBuilder new
 		         deck: { SpeedCard new. cancellationCard };
 		         build.
 	self
-		should: [ aGame shipNamed: 'ship 1' useCard: cancellationCard with: 'ship 1' ]
+		should: [ aGame ship: 'ship 1' plays: cancellationCard ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self
@@ -255,8 +259,8 @@ CardTest >> test013WhenUseREDOCardThenItTakesTheEffectOfTheLastCardUsed [
 		         diceSequence: #( 3 );
 		         deck: { accelerationCard. redoCard };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: accelerationCard with: 'ship 1'.
-	aGame shipNamed: 'ship 1' useCard: redoCard with: 'ship 1'.
+	aGame ship: 'ship 1' plays: accelerationCard.
+	aGame ship: 'ship 1' plays: redoCard.
 	aGame playTurn. "1 + 3 + 2 (Acceleration + su Redo) = 6"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 6
 ]
@@ -271,7 +275,7 @@ CardTest >> test014WhenUseRepeatCardBeforePlayingThenItDoesNotApplyTheLastEffect
 		         allCellsWith: HyperSpaceJump new;
 		         deck: { AccelerationCard new. repeatCard. SpeedCard new. SpeedCard new };
 		         build.
-	aGame shipNamed: 'ship 1' useCard: repeatCard with: 'ship 2'.
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
 	ship2 := aGame findShipBy: 'ship 2'.
 	self assert: ship2 position equals: 1.
 	self assert: ship2 shields equals: 3
@@ -291,7 +295,7 @@ CardTest >> test015WhenUseRepeatCardThenItApplyTheLastEffectOnGame [
 		         build.
 	aGame playTurn. "ship 1: cae en 7, el BlackHole lo lleva a 3"
 	aGame playTurn. "ship 2: cae en 8, el BlackHole lo lleva a 4"
-	aGame shipNamed: 'ship 1' useCard: repeatCard with: 'ship 2'. "otro BlackHole a ship 2: de 4 a 1"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'. "otro BlackHole a ship 2: de 4 a 1"
 	self assert: (aGame findShipBy: 'ship 2') position equals: 1
 ]
 
@@ -308,7 +312,7 @@ CardTest >> test016WhenUseRepeatCardButThereIsNoEffectThenItDoesNotApplyTheLastE
 		         build.
 	aGame playTurn. "ship 1 cae en 4"
 	aGame playTurn. "ship 2 cae en 8"
-	aGame shipNamed: 'ship 1' useCard: repeatCard with: 'ship 2'.
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
 	self assert: (aGame findShipBy: 'ship 2') position equals: 8
 ]
 
@@ -340,7 +344,7 @@ CardTest >> test018WhenShipUseRepeatCardAndLastEffectWasaCardGiverThenItDoesNotR
 		         deck: { repeatCard. RedoCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
 	aGame playTurn. "ship 1 cae en 4 (CardGiver)"
-	aGame shipNamed: 'ship 1' useCard: repeatCard with: 'ship 2'.
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
 	self assert: (aGame cardsOf: 'ship 2') size equals: 2
 ]
 
@@ -353,10 +357,10 @@ CardTest >> test019WhenShipFightToAnotherShipButHasBonusThrowThenItCanWin [
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 3 );
 		         wormHoleBetween: 9 and: 10;
-		         deck: { speedCard. RedoCard new. SpeedCard new. SpeedCard new };
+		         deck: { RedoCard new. SpeedCard new. speedCard. SpeedCard new };
 		         build.
 	aGame playTurn. "ship 1 cae en 4"
-	aGame shipNamed: 'ship 1' useCard: speedCard with: 'ship 1'. "ship 1 se otorga +1"
+	aGame ship: 'ship 2' plays: speedCard targeting: 'ship 1'. "es el turno de ship 2: le da +1 a ship 1"
 	aGame playTurn. "ship 2 cae en 4 y pelea: ship 2 saca 3; ship 1 saca 3 + 1 = 4"
 	self assert: (aGame findShipBy: 'ship 2') shields equals: 2.
 	self assert: (aGame findShipBy: 'ship 1') shields equals: 3
@@ -371,4 +375,62 @@ CardTest >> test020WhenModifyingTheCardsOfAShipFromOutsideThenItsHandDoesNotChan
 		         build.
 	(aGame cardsOf: 'ship 1') removeAll.
 	self assert: (aGame cardsOf: 'ship 1') size equals: 2
+]
+
+{ #category : 'tests' }
+CardTest >> test021WhenAMercenaryHasASpeedCardThenItsBonusCountsInTheBattle [
+
+	| mercenaryCard speedCard aGame |
+	mercenaryCard := MercenaryCard new.
+	speedCard := SpeedCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 2 3 2 7 2 5 9 1 1 );
+		         wormHoleBetween: 9 and: 10;
+		         deck: { mercenaryCard. speedCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: mercenaryCard targeting: 'ship 2'.
+	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 2'.
+	aGame playTurn. "ship 1 cae en 3"
+	aGame playTurn. "ship 2 saca 3 + 1 de la Speed: cae en 5"
+	aGame playTurn. "ship 3 cae en 3 y pelea: ship 3 saca 7; ship 1 saca 2 + su mercenaria 5 + 1 = 8"
+	self assert: (aGame findShipBy: 'ship 1') shields equals: 3.
+	self assert: (aGame findShipBy: 'ship 3') shields equals: 2
+]
+
+{ #category : 'tests' }
+CardTest >> test022WhenRedoReplaysAPermanentCardThenCancellingTheOriginalKeepsTheRedoOne [
+
+	| speedCard redoCard cancellationCard aGame |
+	speedCard := SpeedCard new.
+	redoCard := RedoCard new.
+	cancellationCard := CancellationCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 3 );
+		         deck: { speedCard. redoCard. cancellationCard. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'.
+	aGame ship: 'ship 1' plays: redoCard targeting: 'ship 1'. "dos Speed activas sobre ship 1"
+	aGame ship: 'ship 2' plays: cancellationCard targeting: aGame activeCards first.
+	aGame playTurn. "1 + 3 + 1 de la Speed que queda = 5"
+	self assert: (aGame findShipBy: 'ship 1') position equals: 5
+]
+
+{ #category : 'tests' }
+CardTest >> test023WhenShipPlaysAPermanentCardOutOfItsTurnThenRaiseError [
+
+	| speedCard aGame |
+	speedCard := SpeedCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         deck: { SpeedCard new. SpeedCard new. speedCard. SpeedCard new };
+		         build.
+	self
+		should: [ aGame ship: 'ship 2' plays: speedCard targeting: 'ship 2' ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'Permanent cards can only be played during your turn' ]
 ]

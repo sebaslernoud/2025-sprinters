@@ -35,15 +35,29 @@ Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames deck: aDe
 		  deck: aDeck
 ]
 
-{ #category : 'playing' }
-Game >> applyAccelerationCardEffect [
-	ships do: [:ship | ship increaseBonusThrow  ].
+{ #category : 'cards' }
+Game >> activate: anActiveCard [
+
+	cardManager activate: anActiveCard
 ]
 
-{ #category : 'accessing' }
-Game >> cardManager [
+{ #category : 'cards' }
+Game >> activeCards [
 
-	^ cardManager
+	^ cardManager activeCards
+]
+
+{ #category : 'rolling' }
+Game >> areAllied: aShip with: anotherShip [
+
+	^ ((self mercenariesOf: aShip) includes: anotherShip) or: [
+		  (self mercenariesOf: anotherShip) includes: aShip ]
+]
+
+{ #category : 'cards' }
+Game >> cancel: anActiveCard [
+
+	cardManager cancel: anActiveCard
 ]
 
 { #category : 'accessing' }
@@ -82,7 +96,7 @@ Game >> defeat: aShip [
 
 	board moveToStart: aShip.
 	self damage: aShip.
-	aShip mercenaries do: [ :mercenary | self damage: mercenary ]
+	(self mercenariesOf: aShip) do: [ :mercenary | self damage: mercenary ]
 ]
 
 { #category : 'as yet unclassified' }
@@ -117,7 +131,7 @@ Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames deck:
 	bucketOfDices := aDiceBucket.
 	status := Started new.
 	turnManager := TurnManager with: ships.
-	battleManager := BattleManager with: aDiceBucket.
+	battleManager := BattleManager new.
 	effectManager := EffectManager creation.
 	cardManager := CardManager with: aDeck.
 	ships do: [ :ship | cardManager dealInitialCardsTo: ship ]
@@ -127,6 +141,18 @@ Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames deck:
 Game >> keepPlaying [
 
 	status keepPlaying: self
+]
+
+{ #category : 'cards' }
+Game >> lastPlayedCard [
+
+	^ cardManager lastPlayedCard
+]
+
+{ #category : 'rolling' }
+Game >> mercenariesOf: aShip [
+
+	^ cardManager mercenariesOf: aShip
 ]
 
 { #category : 'as yet unclassified' }
@@ -162,7 +188,7 @@ Game >> playNextTurn [
 
 	| currentShip |
 	currentShip := turnManager nextShip.
-	board move: currentShip by: (bucketOfDices rollFor: currentShip).
+	board move: currentShip by: (self rollFor: currentShip).
 	(currentShip winAt: board) ifTrue: [ ^ self finish ].
 	effectManager
 		apply: (board effectOnPosition: currentShip position)
@@ -178,14 +204,26 @@ Game >> playTurn [
 	status playTurnOf: self
 ]
 
-{ #category : 'as yet unclassified' }
-Game >> resolveShipNamed: shipName useCard: aCard with: anotherShipName [
+{ #category : 'cards' }
+Game >> repeatLastEffectOn: aShip [
+
+	effectManager lastRealEffect applyTo: aShip in: self
+]
+
+{ #category : 'private' }
+Game >> resolveShip: aShipName plays: aCard targeting: aTarget [
 
 	cardManager
-		playCard: aCard
-		by: (self findShipBy: shipName)
-		target: (self findShipBy: anotherShipName)
+		play: aCard
+		by: (self findShipBy: aShipName)
+		targeting: aTarget
 		in: self
+]
+
+{ #category : 'rolling' }
+Game >> rollFor: aShip [
+
+	^ bucketOfDices throw + (cardManager bonusFor: aShip)
 ]
 
 { #category : 'as yet unclassified' }
@@ -194,10 +232,16 @@ Game >> sendAllShipsToStart [
 	ships do: [ :ship | board moveToStart: ship ]
 ]
 
-{ #category : 'playing' }
-Game >> shipNamed: shipName useCard: aCard with: anotherShipName [
+{ #category : 'cards' }
+Game >> ship: aShipName plays: aCard [
 
-	status ship: shipName useCard: aCard with: anotherShipName in: self
+	self ship: aShipName plays: aCard targeting: aShipName
+]
+
+{ #category : 'cards' }
+Game >> ship: aShipName plays: aCard targeting: aTarget [
+
+	status ship: aShipName plays: aCard targeting: aTarget in: self
 ]
 
 { #category : 'accessing' }
@@ -261,4 +305,18 @@ Game >> topShipNames [
 
 	^ ((self shipsSortedByPosition first: (3 min: ships size)) collect: [
 		   :ship | ship name ]) asOrderedCollection
+]
+
+{ #category : 'cards' }
+Game >> validateIsAvailableAsMercenary: aShip [
+
+	(cardManager isHired: aShip) ifTrue: [
+		^ Error signal: 'You can not use this ship as a mercenary' ]
+]
+
+{ #category : 'cards' }
+Game >> validateTurnOf: aShip [
+
+	turnManager shipInTurn == aShip ifFalse: [
+		^ Error signal: 'Permanent cards can only be played during your turn' ]
 ]

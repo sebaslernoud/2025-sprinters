@@ -31,10 +31,10 @@ Started >> rankingOf: aGame [
 		  'The Game has not been played yet so it doesn`t have a ranking'
 ]
 
-{ #category : 'playing' }
-Started >> ship: shipName useCard: aCard with: anotherShipName in: aGame [
+{ #category : 'as yet unclassified' }
+Started >> ship: aShipName plays: aCard targeting: aTarget in: aGame [
 
-	aGame resolveShipNamed: shipName useCard: aCard with: anotherShipName
+	aGame resolveShip: aShipName plays: aCard targeting: aTarget
 ]
 
 { #category : 'playing' }

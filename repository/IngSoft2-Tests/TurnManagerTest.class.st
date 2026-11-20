@@ -101,3 +101,15 @@ TurnManagerTest >> test009WhenAPenalizedShipHasLostItsTurnsThenItPlaysAgain [
 		assert: playedShips
 		equals: #( 'ship2' 'ship3' 'ship2' 'ship3' 'ship1' )
 ]
+
+{ #category : 'tests' }
+TurnManagerTest >> test010WhenAShipIsPenalizedThenTheShipInTurnIsTheNextOneThatCanPlay [
+
+	| ship1 ship2 turnManager |
+	ship1 := Ship create: 'ship1'.
+	ship2 := Ship create: 'ship2'.
+	turnManager := TurnManager with: { ship1. ship2 }.
+	turnManager penalize: ship1 turns: 2.
+	self assert: turnManager shipInTurn equals: ship2.
+	self assert: turnManager nextShip equals: ship2
+]

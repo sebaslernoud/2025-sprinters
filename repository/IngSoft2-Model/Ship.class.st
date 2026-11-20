@@ -3,7 +3,6 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'name',
-		'state',
 		'location',
 		'shields'
 	],
@@ -20,49 +19,12 @@ Ship class >> create: aName [
 	^ self new initializeWith: aName
 ]
 
-{ #category : 'adding' }
-Ship >> addMercenary: aShip [
-
-	state addMercenary: aShip
-]
-
-{ #category : 'playing' }
-Ship >> bonusThrow [
-
-	^ state bonusThrow
-]
-
-{ #category : 'playing' }
-Ship >> decreaseBonusThrow [
-
-	state decreaseBonus
-]
-
-{ #category : 'testing' }
-Ship >> hasAsMercery: aShip [
-
-	^ state checkIfIHaveAsMercery: aShip
-]
-
-{ #category : 'playing' }
-Ship >> helpToFightWith: aDiceBucket [
-
-	^ aDiceBucket throw
-]
-
-{ #category : 'playing' }
-Ship >> increaseBonusThrow [
-
-	state increaseBonus
-]
-
 { #category : 'initialization' }
 Ship >> initializeWith: aName [
 
 	name := aName.
 	location := Location cell: 1 lap: 1.
 	shields := Shields full.
-	state := ShipState creation
 ]
 
 { #category : 'testing' }
@@ -95,12 +57,6 @@ Ship >> loseShield [
 	shields lose
 ]
 
-{ #category : 'as yet unclassified' }
-Ship >> mercenaries [
-
-	^ state mercenaries
-]
-
 { #category : 'path commands' }
 Ship >> moveTo: aLocation [
 
@@ -119,12 +75,6 @@ Ship >> position [
 	^ location cell
 ]
 
-{ #category : 'removing' }
-Ship >> removeMercenary: aShip [
-
-	state removeMercenaries: aShip
-]
-
 { #category : 'as yet unclassified' }
 Ship >> restoreShields [
 
@@ -135,15 +85,6 @@ Ship >> restoreShields [
 Ship >> shields [
 
 	^ shields amount
-]
-
-{ #category : 'playing' }
-Ship >> throwDicesWith: aDiceBucket [
-
-	| result helper |
-	result := aDiceBucket throw.
-	helper := state payHelpToMyMercenariesWith: aDiceBucket.
-	^ result + helper
 ]
 
 { #category : 'playing' }

@@ -5,7 +5,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 AccelerationCard >> activeCardBy: aShip targeting: aTarget in: aGame [
 
 	^ ActiveAcceleration new

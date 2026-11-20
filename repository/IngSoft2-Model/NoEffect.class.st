@@ -8,5 +8,5 @@ Class {
 { #category : 'playing' }
 NoEffect >> applyTo: aShip in: aGame [
 
-	^ 'No effects are applied'
+	^ self
 ]

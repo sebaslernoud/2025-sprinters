@@ -10,9 +10,3 @@ CardGiver >> applyTo: aShip in: aGame [
 
 	aGame giveCardTo: aShip
 ]
-
-{ #category : 'testing' }
-CardGiver >> isCardGiver [
-
-	^ true
-]

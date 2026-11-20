@@ -5,26 +5,26 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 Card >> applyBy: aShip targeting: aTarget in: aGame [
 
 	self subclassResponsibility
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 Card >> playBy: aShip targeting: aTarget in: aGame [
 
 	self validatePlayBy: aShip in: aGame.
 	self applyBy: aShip targeting: aTarget in: aGame
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 Card >> registerIn: aCardManager [
 
 	aCardManager registerPlayed: self
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 Card >> validatePlayBy: aShip in: aGame [
 
 	self subclassResponsibility

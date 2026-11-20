@@ -9,7 +9,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Worm class >> with: aX and: aY [
 	(aX isInteger and: [ aY isInteger ]) ifFalse: [
 		^ Error signal: 'Worm holes positions must be integers' ].

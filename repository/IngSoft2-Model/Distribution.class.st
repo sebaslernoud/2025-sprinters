@@ -9,7 +9,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Distribution class >> of: anEffectGenerator withProbability: aProbability [
 
 	(aProbability between: 0 and: 1) ifFalse: [

@@ -5,7 +5,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 MercenaryCard >> activeCardBy: aShip targeting: aShipName in: aGame [
 
 	| mercenary |

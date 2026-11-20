@@ -11,7 +11,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Board class >> withEffects: effects wormHole: aWorm laps: anAmountOfLaps length: aDistance [
 
 	effects ifEmpty: [
@@ -30,12 +30,6 @@ Board class >> withEffects: effects wormHole: aWorm laps: anAmountOfLaps length:
 Board >> amountOfCells [
 
 	^ amountOfCells
-]
-
-{ #category : 'convertion' }
-Board >> amountOfCellsOf: anEffectOrClass [
-
-	^ cells count: [ :cell | cell effect className = anEffectOrClass ]
 ]
 
 { #category : 'converting' }
@@ -91,14 +85,14 @@ Board >> locationAt: anIndex [
 		  lap: index - 1 // amountOfCells + 1
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'moving' }
 Board >> move: aShip by: anAmountOfCells [
 
 	aShip moveTo:
 		(self locationAt: (self indexOf: aShip location) + anAmountOfCells)
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'moving' }
 Board >> moveToStart: aShip [
 
 	aShip moveTo: aShip location atStart
@@ -110,7 +104,7 @@ Board >> parsecsPerCell [
 	^ distance parsecs / amountOfCells
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'moving' }
 Board >> teleport: aShip to: aCell [
 
 	aShip moveTo: (Location cell: aCell lap: aShip laps)

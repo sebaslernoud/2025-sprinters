@@ -213,11 +213,3 @@ EffectsTest >> test015WhenCreatHyperJumpLightYearEffectToShipThenItMovesPrrsecs 
 	aGame playTurn. "cae en 3, salta 27 años luz = 9 parsecs = 3 celdas"
 	self assert: (aGame findShipBy: 'ship 1') position equals: 6
 ]
-
-{ #category : 'tests' }
-EffectsTest >> test016WhenInitializeGameThenLastRealEffectIsEmpty [
-
-	| aGame |
-	aGame := GameBuilder new build.
-	self assert: aGame effectManager lastRealEffect class equals: NoEffect
-]

@@ -5,7 +5,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 RepeatCard >> applyBy: aShip targeting: aShipName in: aGame [
 
 	aGame repeatLastEffectOn: (aGame findShipBy: aShipName)

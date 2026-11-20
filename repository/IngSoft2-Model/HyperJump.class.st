@@ -38,7 +38,7 @@ HyperJump >> initializeWith: aCollectionOfDistanceToMove [
 	index := 1
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'private' }
 HyperJump >> nextDistance [
 
 	| distance |

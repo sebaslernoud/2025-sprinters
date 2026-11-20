@@ -10,7 +10,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Ship class >> create: aName [
 
 	aName isString ifFalse: [
@@ -75,7 +75,7 @@ Ship >> position [
 	^ location cell
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'shields' }
 Ship >> restoreShields [
 
 	shields restore

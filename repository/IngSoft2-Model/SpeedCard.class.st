@@ -5,7 +5,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 SpeedCard >> activeCardBy: aShip targeting: aShipName in: aGame [
 
 	^ ActiveSpeed on: (aGame findShipBy: aShipName)

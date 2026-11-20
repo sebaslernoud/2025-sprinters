@@ -5,7 +5,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'querying' }
 ActiveAcceleration >> bonusFor: aShip [
 
 	^ 1

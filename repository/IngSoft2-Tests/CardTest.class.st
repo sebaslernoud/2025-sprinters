@@ -332,7 +332,7 @@ CardTest >> test017WhenTheShipMovesThrowTheBoardAndITACrdGiverCellThenShipReciev
 ]
 
 { #category : 'tests' }
-CardTest >> test018WhenShipUseRepeatCardAndLastEffectWasaCardGiverThenItDoesNotReceiveTheCard [
+CardTest >> test018WhenShipUseRepeatCardAndLastEffectWasACardGiverThenTheChosenShipReceivesACard [
 
 	| aGame repeatCard |
 	repeatCard := RepeatCard new.
@@ -343,9 +343,9 @@ CardTest >> test018WhenShipUseRepeatCardAndLastEffectWasaCardGiverThenItDoesNotR
 		         wormHoleBetween: 9 and: 10;
 		         deck: { repeatCard. RedoCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
 		         build.
-	aGame playTurn. "ship 1 cae en 4 (CardGiver)"
-	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
-	self assert: (aGame cardsOf: 'ship 2') size equals: 2
+	aGame playTurn. "ship 1 cae en 4 (CardGiver) y recibe la 5ta carta del mazo"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'. "se repite el CardGiver: ship 2 recibe la 6ta"
+	self assert: (aGame cardsOf: 'ship 2') size equals: 3
 ]
 
 { #category : 'tests' }
@@ -433,4 +433,26 @@ CardTest >> test023WhenShipPlaysAPermanentCardOutOfItsTurnThenRaiseError [
 			self
 				assert: error messageText
 				equals: 'Permanent cards can only be played during your turn' ]
+]
+
+{ #category : 'tests' }
+CardTest >> test024WhenTheLastEffectWasACardGiverAfterABlackHoleThenRepeatAppliesTheCardGiver [
+
+	| effects repeatCard aGame |
+	effects := (1 to: 10) collect: [ :cell | NoEffect new ].
+	effects at: 7 put: BlackHole new.
+	effects at: 4 put: CardGiver new.
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 6 3 );
+		         effects: effects;
+		         wormHoleBetween: 9 and: 10;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1: cae en 7 (BlackHole) -> 3"
+	aGame playTurn. "ship 2: cae en 4 (CardGiver) y recibe una carta"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 1'.
+	self assert: (aGame findShipBy: 'ship 1') position equals: 3.
+	self assert: (aGame cardsOf: 'ship 1') size equals: 2
 ]

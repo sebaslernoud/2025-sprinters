@@ -14,7 +14,7 @@ ActiveSpeed class >> on: aShip [
 	^ self new initializeOn: aShip
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'querying' }
 ActiveSpeed >> bonusFor: aShip [
 
 	^ aShip == target

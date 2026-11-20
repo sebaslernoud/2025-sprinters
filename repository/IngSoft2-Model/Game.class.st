@@ -15,7 +15,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'validating' }
 Game class >> validateUniqueNames: shipNames [
 
 	shipNames asSet size = shipNames size ifFalse: [
@@ -23,7 +23,7 @@ Game class >> validateUniqueNames: shipNames [
 	^ shipNames
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames deck: aDeck [
 
 	shipNames ifEmpty: [ ^ Error signal: 'List of ships must not be empty.' ].
@@ -78,14 +78,14 @@ Game >> currentTopPlayer [
 	^ self shipsSortedByPosition at: 1.
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effects' }
 Game >> damage: aShip [
 
 	aShip loseShield.
 	aShip isDefenseless ifTrue: [ self penalize: aShip ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effects' }
 Game >> damageAllShips [
 
 	ships do: [ :ship | self damage: ship ]
@@ -97,12 +97,6 @@ Game >> defeat: aShip [
 	board moveToStart: aShip.
 	self damage: aShip.
 	(self mercenariesOf: aShip) do: [ :mercenary | self damage: mercenary ]
-]
-
-{ #category : 'as yet unclassified' }
-Game >> effectManager [
-
-	^ effectManager
 ]
 
 { #category : 'accessing' }
@@ -132,7 +126,7 @@ Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames deck:
 	status := Started new.
 	turnManager := TurnManager with: ships.
 	battleManager := BattleManager new.
-	effectManager := EffectManager creation.
+	effectManager := EffectManager new.
 	cardManager := CardManager with: aDeck.
 	ships do: [ :ship | cardManager dealInitialCardsTo: ship ]
 ]
@@ -155,13 +149,13 @@ Game >> mercenariesOf: aShip [
 	^ cardManager mercenariesOf: aShip
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effects' }
 Game >> move: aShip by: anAmountOfCells [
 
 	board move: aShip by: anAmountOfCells
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effects' }
 Game >> moveAllShipsExcept: aShip by: anAmountOfCells [
 
 	(ships copyWithout: aShip) do: [ :ship |
@@ -207,7 +201,7 @@ Game >> playTurn [
 { #category : 'cards' }
 Game >> repeatLastEffectOn: aShip [
 
-	effectManager lastRealEffect applyTo: aShip in: self
+	effectManager repeatLastEffectOn: aShip in: self
 ]
 
 { #category : 'private' }
@@ -226,7 +220,7 @@ Game >> rollFor: aShip [
 	^ bucketOfDices throw + (cardManager bonusFor: aShip)
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effects' }
 Game >> sendAllShipsToStart [
 
 	ships do: [ :ship | board moveToStart: ship ]
@@ -294,7 +288,7 @@ Game >> someShipWon [
 	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [ self finish ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'effects' }
 Game >> teleport: aShip to: aCell [
 
 	board teleport: aShip to: aCell

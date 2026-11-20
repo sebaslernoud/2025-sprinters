@@ -38,7 +38,7 @@ Shields >> isDepleted [
 	^ amount = 0
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'modifying' }
 Shields >> lose [
 
 	amount := amount - 1

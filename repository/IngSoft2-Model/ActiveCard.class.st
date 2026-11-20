@@ -5,19 +5,19 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'querying' }
 ActiveCard >> bonusFor: aShip [
 
 	^ 0
 ]
 
-{ #category : 'testing' }
+{ #category : 'querying' }
 ActiveCard >> hasHired: aShip [
 
 	^ false
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'querying' }
 ActiveCard >> mercenariesOf: aShip [
 
 	^ #(  )

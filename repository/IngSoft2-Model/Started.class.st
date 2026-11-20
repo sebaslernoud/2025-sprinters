@@ -31,7 +31,7 @@ Started >> rankingOf: aGame [
 		  'The Game has not been played yet so it doesn`t have a ranking'
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 Started >> ship: aShipName plays: aCard targeting: aTarget in: aGame [
 
 	aGame resolveShip: aShipName plays: aCard targeting: aTarget
@@ -43,7 +43,7 @@ Started >> showWinner: aGame [
 	^ Error signal: 'The game is not finished, so it hasn´t a winner yet'
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'playing' }
 Started >> skipTurnOf: aGame [
 
 	aGame skipNextTurn

@@ -55,7 +55,7 @@ TurnManager >> servePenaltyOf: aShip [
 	penalties at: aShip put: (penalties at: aShip) - 1
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 TurnManager >> shipInTurn [
 
 	| simulatedTurn simulatedPenalties ship |
@@ -69,7 +69,7 @@ TurnManager >> shipInTurn [
 	^ ship
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'private' }
 TurnManager >> shipInTurnOrder [
 
 	| ship |

@@ -9,7 +9,7 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'creation' }
 Location class >> cell: aCell lap: aLap [
 
 	^ self new initializeCell: aCell lap: aLap

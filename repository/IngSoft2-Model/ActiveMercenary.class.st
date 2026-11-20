@@ -9,13 +9,13 @@ Class {
 	#package : 'IngSoft2-Model'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'instance ' }
 ActiveMercenary class >> hiredBy: aShip mercenary: anotherShip [
 
 	^ self new initializeHiredBy: aShip mercenary: anotherShip
 ]
 
-{ #category : 'testing' }
+{ #category : 'querying' }
 ActiveMercenary >> hasHired: aShip [
 
 	^ mercenary == aShip
@@ -28,7 +28,7 @@ ActiveMercenary >> initializeHiredBy: aShip mercenary: anotherShip [
 	mercenary := anotherShip
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'querying' }
 ActiveMercenary >> mercenariesOf: aShip [
 
 	^ aShip == hirer

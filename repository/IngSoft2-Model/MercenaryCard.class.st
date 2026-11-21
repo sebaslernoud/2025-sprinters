@@ -9,7 +9,7 @@ Class {
 MercenaryCard >> activeCardBy: aShip targeting: aShipName in: aGame [
 
 	| mercenary |
-	mercenary := aGame findShipBy: aShipName.
+	mercenary := aGame shipNamed: aShipName.
 	aGame validateIsAvailableAsMercenary: mercenary.
 	^ ActiveMercenary hiredBy: aShip mercenary: mercenary
 ]

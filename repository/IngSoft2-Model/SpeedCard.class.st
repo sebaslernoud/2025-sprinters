@@ -8,5 +8,5 @@ Class {
 { #category : 'playing' }
 SpeedCard >> activeCardBy: aShip targeting: aShipName in: aGame [
 
-	^ ActiveSpeed on: (aGame findShipBy: aShipName)
+	^ ActiveSpeed on: (aGame shipNamed: aShipName)
 ]

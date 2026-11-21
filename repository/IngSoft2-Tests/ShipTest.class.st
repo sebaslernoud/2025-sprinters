@@ -94,7 +94,7 @@ ShipTest >> test006WhenShip1IsInFinalLapThenWinnerIsShip1 [
 		         laps: 3;
 		         build.
 	aGame play.
-	self assert: aGame showWinner name equals: 'Ship1'
+	self assert: aGame winner equals: 'Ship1'
 ]
 
 { #category : 'tests' }
@@ -150,8 +150,8 @@ ShipTest >> test016WhenShipInTurnSkipsItsTurnThenItRecoversItsShieldsAndDoesNotM
 		         wormHoleBetween: 9 and: 10;
 		         laps: 3;
 		         build.
-	ship1 := aGame findShipBy: 'ship 1'.
-	ship2 := aGame findShipBy: 'ship 2'.
+	ship1 := aGame shipNamed: 'ship 1'.
+	ship2 := aGame shipNamed: 'ship 2'.
 	aGame playTurn. "ship 1: cae en 6 (HyperSpaceJump) -> 10, le quedan 2 escudos"
 	aGame playTurn. "ship 2: cae en 3 (HyperSpaceJump) -> 7, le quedan 2 escudos"
 	aGame skipTurn. "le toca a ship 1: no tira y recupera sus escudos"
@@ -171,7 +171,7 @@ ShipTest >> test017WhenShipMovesMoreCellsThanCellsInBoardThenItActualPositionIs1
 		         laps: 3;
 		         build.
 	aGame playTurn. "1 + 10 = 11: da la vuelta y queda en 1"
-	self assert: (aGame findShipBy: 'ship 1') position equals: 1
+	self assert: (aGame shipNamed: 'ship 1') position equals: 1
 ]
 
 { #category : 'tests' }
@@ -183,7 +183,7 @@ ShipTest >> test018WhenShipMovesToLastCellInLapThanCellsInBoardThenItIsInLastCel
 		         laps: 3;
 		         build.
 	aGame playTurn.
-	self assert: (aGame findShipBy: 'ship 1') position equals: 10
+	self assert: (aGame shipNamed: 'ship 1') position equals: 10
 ]
 
 { #category : 'tests' }
@@ -197,5 +197,5 @@ ShipTest >> test019WhenShipMovesByEffectAndItIsInEarlyCellsThenLapsStayZeroAndNo
 		         laps: 3;
 		         build.
 	aGame playTurn. "cae en 2, el BlackHole lo lleva a 1 sin perder la vuelta"
-	self assert: (aGame findShipBy: 'ship 1') laps equals: 1
+	self assert: (aGame shipNamed: 'ship 1') laps equals: 1
 ]

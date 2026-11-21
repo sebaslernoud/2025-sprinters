@@ -13,7 +13,7 @@ GameStateTest >> test007WhenGameIsFinishedAndAskForWinnerThenReturnWinner [
 		         diceSequence: #( 10 );
 		         build.
 	aGame play.
-	self assert: aGame showWinner name equals: 'ship 1'
+	self assert: aGame winner equals: 'ship 1'
 ]
 
 { #category : 'tests' }
@@ -22,7 +22,7 @@ GameStateTest >> test008WhenGameIsNotPlayedAndAskForWinnerThenRaiseError [
 	| aGame |
 	aGame := GameBuilder new build.
 	self
-		should: [ aGame showWinner ]
+		should: [ aGame winner ]
 		raise: Error
 		withExceptionDo: [ :error |
 			self
@@ -39,8 +39,8 @@ GameStateTest >> test009WhenGamePlaysOneTurnThenOnlyTheShipInTurnMoves [
 		         diceSequence: #( 5 );
 		         build.
 	aGame playTurn.
-	self assert: (aGame findShipBy: 'ship 1') position equals: 6.
-	self assert: (aGame findShipBy: 'ship 2') position equals: 1
+	self assert: (aGame shipNamed: 'ship 1') position equals: 6.
+	self assert: (aGame shipNamed: 'ship 2') position equals: 1
 ]
 
 { #category : 'tests' }

@@ -63,19 +63,13 @@ Game >> cancel: anActiveCard [
 { #category : 'accessing' }
 Game >> cardsOf: aShipName [
 
-	^ (cardManager handOf: (self findShipBy: aShipName)) copy
+	^ (cardManager handOf: (self shipNamed: aShipName)) copy
 ]
 
 { #category : 'converting' }
 Game >> cellsIn: aDistance [
 
 	^ board cellsIn: aDistance
-]
-
-{ #category : 'accessing' }
-Game >> currentTopPlayer [
-
-	^ self shipsSortedByPosition at: 1.
 ]
 
 { #category : 'effects' }
@@ -91,24 +85,16 @@ Game >> damageAllShips [
 	ships do: [ :ship | self damage: ship ]
 ]
 
-{ #category : 'battle' }
-Game >> defeat: aShip [
-
-	board moveToStart: aShip.
-	self damage: aShip.
-	(self mercenariesOf: aShip) do: [ :mercenary | self damage: mercenary ]
-]
-
-{ #category : 'accessing' }
-Game >> findShipBy: aName [
-
-	^ ships detect: [ :ship | ship name = aName ]
-]
-
 { #category : 'private' }
 Game >> finish [
 
 	status := Finished new
+]
+
+{ #category : 'playing' }
+Game >> finishIfSomeShipWon [
+
+	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [ self finish ]
 ]
 
 { #category : 'dealing' }
@@ -137,10 +123,22 @@ Game >> keepPlaying [
 	status keepPlaying: self
 ]
 
+{ #category : 'querying' }
+Game >> lapOf: aShipName [
+
+	^ (self shipNamed: aShipName) laps
+]
+
 { #category : 'cards' }
 Game >> lastPlayedCard [
 
 	^ cardManager lastPlayedCard
+]
+
+{ #category : 'private' }
+Game >> leaderName [
+
+	^ self shipsSortedByPosition first name
 ]
 
 { #category : 'rolling' }
@@ -172,9 +170,7 @@ Game >> penalize: aShip [
 { #category : 'playing' }
 Game >> play [
 
-	status play:self.
-
-	^ 'Game over'
+	status play: self
 ]
 
 { #category : 'playing' }
@@ -188,14 +184,35 @@ Game >> playNextTurn [
 		apply: (board effectOnPosition: currentShip position)
 		to: currentShip
 		in: self.
-	battleManager resolveIfNeededAt: currentShip in: self.
-	self someShipWon
+	battleManager resolveBattlesOf: currentShip in: self.
+	self finishIfSomeShipWon
 ]
 
 { #category : 'playing' }
 Game >> playTurn [
 
 	status playTurnOf: self
+]
+
+{ #category : 'querying' }
+Game >> positionOf: aShipName [
+
+	^ (self shipNamed: aShipName) position
+]
+
+{ #category : 'playing' }
+Game >> positions [
+
+	| result |
+	result := Dictionary new.
+	ships do: [ :ship | result at: ship name put: ship position ].
+	^ result
+]
+
+{ #category : 'accessing' }
+Game >> ranking [
+
+	^ status rankingOf: self
 ]
 
 { #category : 'cards' }
@@ -209,7 +226,7 @@ Game >> resolveShip: aShipName plays: aCard targeting: aTarget [
 
 	cardManager
 		play: aCard
-		by: (self findShipBy: aShipName)
+		by: (self shipNamed: aShipName)
 		targeting: aTarget
 		in: self
 ]
@@ -223,7 +240,19 @@ Game >> rollFor: aShip [
 { #category : 'effects' }
 Game >> sendAllShipsToStart [
 
-	ships do: [ :ship | board moveToStart: ship ]
+	ships do: [ :ship | self sendToStart: ship ]
+]
+
+{ #category : 'effects' }
+Game >> sendToStart: aShip [
+
+	board moveToStart: aShip
+]
+
+{ #category : 'querying' }
+Game >> shieldsOf: aShipName [
+
+	^ (self shipNamed: aShipName) shields
 ]
 
 { #category : 'cards' }
@@ -239,35 +268,23 @@ Game >> ship: aShipName plays: aCard targeting: aTarget [
 ]
 
 { #category : 'accessing' }
-Game >> ships [
+Game >> shipNamed: aShipName [
+
 	^ ships
+		  detect: [ :ship | ship name = aShipName ]
+		  ifNone: [ Error signal: 'There is no ship named ' , aShipName ]
+]
+
+{ #category : 'battle' }
+Game >> shipsAt: aLocation [
+
+	^ ships select: [ :ship | ship location = aLocation ]
 ]
 
 { #category : 'accessing' }
 Game >> shipsSortedByPosition [
 
 	^ ships copy sort: [ :a :b | a isAheadOf: b ]
-]
-
-{ #category : 'accessing' }
-Game >> showRanking [
-
-	^ status rankingOf: self
-]
-
-{ #category : 'playing' }
-Game >> showShipsPositions [
-
-	| result |
-	result := Dictionary new.
-	ships do: [ :ship | result at: ship name put: ship position ].
-	^ result
-]
-
-{ #category : 'accessing' }
-Game >> showWinner [
-
-	^ status showWinner: self
 ]
 
 { #category : 'private' }
@@ -280,12 +297,6 @@ Game >> skipNextTurn [
 Game >> skipTurn [
 
 	status skipTurnOf: self
-]
-
-{ #category : 'playing' }
-Game >> someShipWon [
-
-	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [ self finish ]
 ]
 
 { #category : 'effects' }
@@ -313,4 +324,10 @@ Game >> validateTurnOf: aShip [
 
 	turnManager shipInTurn == aShip ifFalse: [
 		^ Error signal: 'Permanent cards can only be played during your turn' ]
+]
+
+{ #category : 'accessing' }
+Game >> winner [
+
+	^ status winnerOf: self
 ]

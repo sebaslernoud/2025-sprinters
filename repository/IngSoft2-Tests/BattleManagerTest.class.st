@@ -16,8 +16,8 @@ BattleManagerTest >> test001WhenTwoShipsFightAndShip2WinsThenShip1LoseBatle [
 		         build.
 	aGame playTurn. "ship 1 cae en 4"
 	aGame playTurn. "ship 2 cae en 4 y pelean: ship 2 saca 9, ship 1 saca 6"
-	ship1 := aGame findShipBy: 'ship 1'.
-	ship2 := aGame findShipBy: 'ship 2'.
+	ship1 := aGame shipNamed: 'ship 1'.
+	ship2 := aGame shipNamed: 'ship 2'.
 	self assert: ship1 shields equals: 2.
 	self assert: ship1 position equals: 1.
 	self assert: ship2 shields equals: 3 "REMOVE ME"

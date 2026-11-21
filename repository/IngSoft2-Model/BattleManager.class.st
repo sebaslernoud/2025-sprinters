@@ -13,6 +13,14 @@ BattleManager >> battleRollOf: aShip in: aGame [
 		  into: [ :total :mercenary | total + (aGame rollFor: mercenary) ]
 ]
 
+{ #category : 'private' }
+BattleManager >> defeat: aShip in: aGame [
+
+	aGame sendToStart: aShip.
+	aGame damage: aShip.
+	(aGame mercenariesOf: aShip) do: [ :mercenary | aGame damage: mercenary ]
+]
+
 { #category : 'playing' }
 BattleManager >> fightBetween: shipA and: shipB in: aGame [
 
@@ -21,17 +29,17 @@ BattleManager >> fightBetween: shipA and: shipB in: aGame [
 	resultA := self battleRollOf: shipA in: aGame.
 	resultB := self battleRollOf: shipB in: aGame.
 	resultA = resultB ] whileTrue.
-	aGame defeat: (resultA > resultB
-			 ifTrue: [ shipB ]
-			 ifFalse: [ shipA ])
+	self
+		defeat: (resultA > resultB
+				 ifTrue: [ shipB ]
+				 ifFalse: [ shipA ])
+		in: aGame
 ]
 
 { #category : 'playing' }
-BattleManager >> resolveIfNeededAt: actualShip in: aGame [
+BattleManager >> resolveBattlesOf: aShip in: aGame [
 
-	(aGame ships select: [ :ship |
-		 ship ~~ actualShip and: [ ship location = actualShip location ] ])
-		do: [ :enemy |
-			(aGame areAllied: actualShip with: enemy) ifFalse: [
-				self fightBetween: actualShip and: enemy in: aGame ] ]
+	((aGame shipsAt: aShip location) copyWithout: aShip) do: [ :enemy |
+		(aGame areAllied: aShip with: enemy) ifFalse: [
+			self fightBetween: aShip and: enemy in: aGame ] ]
 ]

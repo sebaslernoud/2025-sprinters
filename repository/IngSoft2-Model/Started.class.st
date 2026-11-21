@@ -38,13 +38,13 @@ Started >> ship: aShipName plays: aCard targeting: aTarget in: aGame [
 ]
 
 { #category : 'playing' }
-Started >> showWinner: aGame [
-
-	^ Error signal: 'The game is not finished, so it hasn´t a winner yet'
-]
-
-{ #category : 'playing' }
 Started >> skipTurnOf: aGame [
 
 	aGame skipNextTurn
+]
+
+{ #category : 'playing' }
+Started >> winnerOf: aGame [
+
+	^ Error signal: 'The game is not finished, so it hasn´t a winner yet'
 ]

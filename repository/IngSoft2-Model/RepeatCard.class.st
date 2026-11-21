@@ -8,5 +8,5 @@ Class {
 { #category : 'playing' }
 RepeatCard >> applyBy: aShip targeting: aShipName in: aGame [
 
-	aGame repeatLastEffectOn: (aGame findShipBy: aShipName)
+	aGame repeatLastEffectOn: (aGame shipNamed: aShipName)
 ]

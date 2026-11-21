@@ -35,7 +35,7 @@ Game class >> with: aBoard using: aDiceBucket andShipsNamed: shipNames deck: aDe
 		  deck: aDeck
 ]
 
-{ #category : 'cards' }
+{ #category : 'card rules' }
 Game >> activate: anActiveCard [
 
 	cardManager activate: anActiveCard
@@ -47,26 +47,26 @@ Game >> activeCards [
 	^ cardManager activeCards
 ]
 
-{ #category : 'rolling' }
+{ #category : 'battle' }
 Game >> areAllied: aShip with: anotherShip [
 
 	^ ((self mercenariesOf: aShip) includes: anotherShip) or: [
 		  (self mercenariesOf: anotherShip) includes: aShip ]
 ]
 
-{ #category : 'cards' }
+{ #category : 'card rules' }
 Game >> cancel: anActiveCard [
 
 	cardManager cancel: anActiveCard
 ]
 
-{ #category : 'accessing' }
+{ #category : 'cards' }
 Game >> cardsOf: aShipName [
 
 	^ (cardManager handOf: (self shipNamed: aShipName)) copy
 ]
 
-{ #category : 'converting' }
+{ #category : 'effects' }
 Game >> cellsIn: aDistance [
 
 	^ board cellsIn: aDistance
@@ -91,13 +91,13 @@ Game >> finish [
 	status := Finished new
 ]
 
-{ #category : 'playing' }
+{ #category : 'private' }
 Game >> finishIfSomeShipWon [
 
 	(ships anySatisfy: [ :ship | ship winAt: board ]) ifTrue: [ self finish ]
 ]
 
-{ #category : 'dealing' }
+{ #category : 'effects' }
 Game >> giveCardTo: aShip [
 
 	cardManager giveCardTo: aShip
@@ -117,7 +117,7 @@ Game >> initializeWith: aBoard using: aDiceBucket andShipsNamed: shipNames deck:
 	ships do: [ :ship | cardManager dealInitialCardsTo: ship ]
 ]
 
-{ #category : 'playing' }
+{ #category : 'private' }
 Game >> keepPlaying [
 
 	status keepPlaying: self
@@ -129,7 +129,7 @@ Game >> lapOf: aShipName [
 	^ (self shipNamed: aShipName) laps
 ]
 
-{ #category : 'cards' }
+{ #category : 'card rules' }
 Game >> lastPlayedCard [
 
 	^ cardManager lastPlayedCard
@@ -141,7 +141,7 @@ Game >> leaderName [
 	^ self shipsSortedByPosition first name
 ]
 
-{ #category : 'rolling' }
+{ #category : 'battle' }
 Game >> mercenariesOf: aShip [
 
 	^ cardManager mercenariesOf: aShip
@@ -173,7 +173,7 @@ Game >> play [
 	status play: self
 ]
 
-{ #category : 'playing' }
+{ #category : 'private' }
 Game >> playNextTurn [
 
 	| currentShip |
@@ -200,7 +200,7 @@ Game >> positionOf: aShipName [
 	^ (self shipNamed: aShipName) position
 ]
 
-{ #category : 'playing' }
+{ #category : 'querying' }
 Game >> positions [
 
 	| result |
@@ -209,13 +209,13 @@ Game >> positions [
 	^ result
 ]
 
-{ #category : 'accessing' }
+{ #category : 'querying' }
 Game >> ranking [
 
 	^ status rankingOf: self
 ]
 
-{ #category : 'cards' }
+{ #category : 'card rules' }
 Game >> repeatLastEffectOn: aShip [
 
 	effectManager repeatLastEffectOn: aShip in: self
@@ -231,7 +231,7 @@ Game >> resolveShip: aShipName plays: aCard targeting: aTarget [
 		in: self
 ]
 
-{ #category : 'rolling' }
+{ #category : 'battle' }
 Game >> rollFor: aShip [
 
 	^ bucketOfDices throw + (cardManager bonusFor: aShip)
@@ -267,7 +267,7 @@ Game >> ship: aShipName plays: aCard targeting: aTarget [
 	status ship: aShipName plays: aCard targeting: aTarget in: self
 ]
 
-{ #category : 'accessing' }
+{ #category : 'private' }
 Game >> shipNamed: aShipName [
 
 	^ ships
@@ -281,7 +281,7 @@ Game >> shipsAt: aLocation [
 	^ ships select: [ :ship | ship location = aLocation ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'private' }
 Game >> shipsSortedByPosition [
 
 	^ ships copy sort: [ :a :b | a isAheadOf: b ]
@@ -305,28 +305,28 @@ Game >> teleport: aShip to: aCell [
 	board teleport: aShip to: aCell
 ]
 
-{ #category : 'playing' }
+{ #category : 'private' }
 Game >> topShipNames [
 
 	^ ((self shipsSortedByPosition first: (3 min: ships size)) collect: [
 		   :ship | ship name ]) asOrderedCollection
 ]
 
-{ #category : 'cards' }
+{ #category : 'card rules' }
 Game >> validateIsAvailableAsMercenary: aShip [
 
 	(cardManager isHired: aShip) ifTrue: [
 		^ Error signal: 'You can not use this ship as a mercenary' ]
 ]
 
-{ #category : 'cards' }
+{ #category : 'card rules' }
 Game >> validateTurnOf: aShip [
 
 	turnManager shipInTurn == aShip ifFalse: [
 		^ Error signal: 'Permanent cards can only be played during your turn' ]
 ]
 
-{ #category : 'accessing' }
+{ #category : 'querying' }
 Game >> winner [
 
 	^ status winnerOf: self

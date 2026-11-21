@@ -58,5 +58,5 @@ WormHoleTest >> test004WhenShipMovesInsideWormholeThenPositionChanges [
 		         laps: 3;
 		         build.
 	aGame playTurn. "cae en 6 y el wormhole lo lleva a 2"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 2
+	self assert: (aGame positionOf: 'ship 1') equals: 2
 ]

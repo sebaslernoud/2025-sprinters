@@ -36,7 +36,7 @@ CardTest >> test001WhenUseSpeedCardFromDeckThenApplyItEffect [
 		         build.
 	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'.
 	aGame playTurn. "1 + 6 + 1 de la Speed = 8"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 8
+	self assert: (aGame positionOf: 'ship 1') equals: 8
 ]
 
 { #category : 'tests' }
@@ -58,7 +58,7 @@ CardTest >> test002WhenShipWantsToPlayACardThatItDoesNotHaveThenRaiseError [
 { #category : 'tests' }
 CardTest >> test003WhenShipUseMercenaryCardWithShip2ThenTheyDoNotBattle [
 
-	| aGame mercenaryCard ship1 mercenary |
+	| aGame mercenaryCard |
 	mercenaryCard := MercenaryCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'mercenary' );
@@ -68,12 +68,10 @@ CardTest >> test003WhenShipUseMercenaryCardWithShip2ThenTheyDoNotBattle [
 	aGame ship: 'ship 1' plays: mercenaryCard targeting: 'mercenary'.
 	aGame playTurn. "ship 1 cae en 7"
 	aGame playTurn. "mercenary cae en 7: son aliadas, no pelean"
-	ship1 := aGame shipNamed: 'ship 1'.
-	mercenary := aGame shipNamed: 'mercenary'.
-	self assert: ship1 position equals: 7.
-	self assert: mercenary position equals: 7.
-	self assert: ship1 shields equals: 3.
-	self assert: mercenary shields equals: 3
+	self assert: (aGame positionOf: 'ship 1') equals: 7.
+	self assert: (aGame positionOf: 'mercenary') equals: 7.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame shieldsOf: 'mercenary') equals: 3
 ]
 
 { #category : 'tests' }
@@ -103,10 +101,10 @@ CardTest >> test005WhenShip1FightToShip3UsingShip2AsMErcenaryThenShip1WinTheBatt
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 cae en 4"
 	aGame playTurn. "ship 3 cae en 3 y pelea: ship 3 saca 5; ship 1 saca 2 + 4 de su mercenaria = 6"
-	self assert: (aGame shipNamed: 'ship 3') shields equals: 2.
-	self assert: (aGame shipNamed: 'ship 3') position equals: 1.
-	self assert: (aGame shipNamed: 'ship 1') shields equals: 3.
-	self assert: (aGame shipNamed: 'ship 2') shields equals: 3.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 2.
+	self assert: (aGame positionOf: 'ship 3') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3.
 ]
 
 { #category : 'tests' }
@@ -124,9 +122,9 @@ CardTest >> test006WhenShip1FightToShip3UsingShip2AsMErcenaryAndShip3WonThenShip
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 cae en 4"
 	aGame playTurn. "ship 3 cae en 3 y pelea: ship 3 saca 7; ship 1 saca 2 + 4 de su mercenaria = 6"
-	self assert: (aGame shipNamed: 'ship 1') shields equals: 2.
-	self assert: (aGame shipNamed: 'ship 2') shields equals: 2.
-	self assert: (aGame shipNamed: 'ship 3') shields equals: 3.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 2.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 3.
 ]
 
 { #category : 'tests' }
@@ -168,9 +166,9 @@ CardTest >> test008WhenUseAccelerationCardThenAllThrowsIncrementsBy1 [
 	aGame playTurn.
 	aGame playTurn.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 3.
-	self assert: (aGame shipNamed: 'ship 2') position equals: 4.
-	self assert: (aGame shipNamed: 'ship 3') position equals: 5
+	self assert: (aGame positionOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 4.
+	self assert: (aGame positionOf: 'ship 3') equals: 5
 ]
 
 { #category : 'tests' }
@@ -187,7 +185,7 @@ CardTest >> test009WhenUseCancellationCardThenRemoveSpeedCard [
 	aGame ship: 'ship 1' plays: speedCard targeting: 'ship 1'.
 	aGame ship: 'ship 1' plays: cancellationCard targeting: aGame activeCards first.
 	aGame playTurn. "1 + 3, sin el +1 de la Speed cancelada"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 4
+	self assert: (aGame positionOf: 'ship 1') equals: 4
 ]
 
 { #category : 'tests' }
@@ -206,8 +204,8 @@ CardTest >> test010WhenUseCancellationCardWithAccelerationThenRemoveAcceleration
 	aGame playTurn. "ship 1: 1 + 1 + 1 de la Acceleration = 3"
 	aGame ship: 'ship 1' plays: cancellationCard targeting: aGame activeCards first.
 	aGame playTurn. "ship 2: 1 + 3, ya sin Acceleration = 4"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 3.
-	self assert: (aGame shipNamed: 'ship 2') position equals: 4
+	self assert: (aGame positionOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 4
 ]
 
 { #category : 'tests' }
@@ -227,9 +225,9 @@ CardTest >> test011WhenUseCancellationCardWithMercenaryThenRemoveMercenary [
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 cae en 2"
 	aGame playTurn. "ship 3 cae en 3: ya no son aliadas, pelean 5 contra 3"
-	self assert: (aGame shipNamed: 'ship 1') shields equals: 2.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 1.
-	self assert: (aGame shipNamed: 'ship 3') shields equals: 3
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 3
 ]
 
 { #category : 'tests' }
@@ -262,13 +260,13 @@ CardTest >> test013WhenUseREDOCardThenItTakesTheEffectOfTheLastCardUsed [
 	aGame ship: 'ship 1' plays: accelerationCard.
 	aGame ship: 'ship 1' plays: redoCard.
 	aGame playTurn. "1 + 3 + 2 (Acceleration + su Redo) = 6"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 6
+	self assert: (aGame positionOf: 'ship 1') equals: 6
 ]
 
 { #category : 'tests' }
 CardTest >> test014WhenUseRepeatCardBeforePlayingThenItDoesNotApplyTheLastEffectOnGame [
 
-	| aGame repeatCard ship2 |
+	| aGame repeatCard |
 	repeatCard := RepeatCard new.
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
@@ -276,9 +274,8 @@ CardTest >> test014WhenUseRepeatCardBeforePlayingThenItDoesNotApplyTheLastEffect
 		         deck: { AccelerationCard new. repeatCard. SpeedCard new. SpeedCard new };
 		         build.
 	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
-	ship2 := aGame shipNamed: 'ship 2'.
-	self assert: ship2 position equals: 1.
-	self assert: ship2 shields equals: 3
+	self assert: (aGame positionOf: 'ship 2') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3
 ]
 
 { #category : 'tests' }
@@ -296,7 +293,7 @@ CardTest >> test015WhenUseRepeatCardThenItApplyTheLastEffectOnGame [
 	aGame playTurn. "ship 1: cae en 7, el BlackHole lo lleva a 3"
 	aGame playTurn. "ship 2: cae en 8, el BlackHole lo lleva a 4"
 	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'. "otro BlackHole a ship 2: de 4 a 1"
-	self assert: (aGame shipNamed: 'ship 2') position equals: 1
+	self assert: (aGame positionOf: 'ship 2') equals: 1
 ]
 
 { #category : 'tests' }
@@ -313,7 +310,7 @@ CardTest >> test016WhenUseRepeatCardButThereIsNoEffectThenItDoesNotApplyTheLastE
 	aGame playTurn. "ship 1 cae en 4"
 	aGame playTurn. "ship 2 cae en 8"
 	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
-	self assert: (aGame shipNamed: 'ship 2') position equals: 8
+	self assert: (aGame positionOf: 'ship 2') equals: 8
 ]
 
 { #category : 'tests' }
@@ -362,8 +359,8 @@ CardTest >> test019WhenShipFightToAnotherShipButHasBonusThrowThenItCanWin [
 	aGame playTurn. "ship 1 cae en 4"
 	aGame ship: 'ship 2' plays: speedCard targeting: 'ship 1'. "es el turno de ship 2: le da +1 a ship 1"
 	aGame playTurn. "ship 2 cae en 4 y pelea: ship 2 saca 3; ship 1 saca 3 + 1 = 4"
-	self assert: (aGame shipNamed: 'ship 2') shields equals: 2.
-	self assert: (aGame shipNamed: 'ship 1') shields equals: 3
+	self assert: (aGame shieldsOf: 'ship 2') equals: 2.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3
 ]
 
 { #category : 'tests' }
@@ -394,8 +391,8 @@ CardTest >> test021WhenAMercenaryHasASpeedCardThenItsBonusCountsInTheBattle [
 	aGame playTurn. "ship 1 cae en 3"
 	aGame playTurn. "ship 2 saca 3 + 1 de la Speed: cae en 5"
 	aGame playTurn. "ship 3 cae en 3 y pelea: ship 3 saca 7; ship 1 saca 2 + su mercenaria 5 + 1 = 8"
-	self assert: (aGame shipNamed: 'ship 1') shields equals: 3.
-	self assert: (aGame shipNamed: 'ship 3') shields equals: 2
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 2
 ]
 
 { #category : 'tests' }
@@ -414,7 +411,7 @@ CardTest >> test022WhenRedoReplaysAPermanentCardThenCancellingTheOriginalKeepsTh
 	aGame ship: 'ship 1' plays: redoCard targeting: 'ship 1'. "dos Speed activas sobre ship 1"
 	aGame ship: 'ship 2' plays: cancellationCard targeting: aGame activeCards first.
 	aGame playTurn. "1 + 3 + 1 de la Speed que queda = 5"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 5
+	self assert: (aGame positionOf: 'ship 1') equals: 5
 ]
 
 { #category : 'tests' }
@@ -453,6 +450,6 @@ CardTest >> test024WhenTheLastEffectWasACardGiverAfterABlackHoleThenRepeatApplie
 	aGame playTurn. "ship 1: cae en 7 (BlackHole) -> 3"
 	aGame playTurn. "ship 2: cae en 4 (CardGiver) y recibe una carta"
 	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 1'.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 3.
+	self assert: (aGame positionOf: 'ship 1') equals: 3.
 	self assert: (aGame cardsOf: 'ship 1') size equals: 2
 ]

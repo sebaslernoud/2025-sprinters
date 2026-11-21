@@ -98,7 +98,7 @@ GameTest >> test007WhenCreateGameThenGameCreateShips [
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
 		         build.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 1
+	self assert: (aGame positionOf: 'ship 1') equals: 1
 ]
 
 { #category : 'tests' }
@@ -159,7 +159,7 @@ GameTest >> test011WhenShipIsOnCellWithEffectThenReceiveEffect [
 		         allCellsWith: BlackHole new;
 		         build.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 3
+	self assert: (aGame positionOf: 'ship 1') equals: 3
 ]
 
 { #category : 'tests' }
@@ -171,13 +171,13 @@ GameTest >> test012WhenShipIsOnCellWithNoEffectThenDoNotReceiveEffect [
 		         diceSequence: #( 5 );
 		         build.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 6
+	self assert: (aGame positionOf: 'ship 1') equals: 6
 ]
 
 { #category : 'tests' }
 GameTest >> test013WhenTwoShipsAreInTheSameCellWithEffectThenTheyDoNotBattle [
 
-	| aGame ship1 ship2 |
+	| aGame |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 6 2 );
@@ -186,12 +186,10 @@ GameTest >> test013WhenTwoShipsAreInTheSameCellWithEffectThenTheyDoNotBattle [
 		         build.
 	aGame playTurn. "ship 1: 1 + 6 = 7, el BlackHole lo lleva a 3"
 	aGame playTurn. "ship 2: 1 + 2 = 3, donde esta ship 1; el BlackHole lo lleva a 1"
-	ship1 := aGame shipNamed: 'ship 1'.
-	ship2 := aGame shipNamed: 'ship 2'.
-	self assert: ship1 position equals: 3.
-	self assert: ship2 position equals: 1.
-	self assert: ship1 shields equals: 3.
-	self assert: ship2 shields equals: 3
+	self assert: (aGame positionOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3
 ]
 
 { #category : 'tests' }
@@ -203,13 +201,13 @@ GameTest >> test014WhenShipIsMovedBecauseAnEffectToACellWithEffectThenShipDoNotR
 		         allCellsWith: BlackHole new;
 		         build.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 3
+	self assert: (aGame positionOf: 'ship 1') equals: 3
 ]
 
 { #category : 'tests' }
 GameTest >> test015WhenShipIsMovedByAnEffectToACellWithAnotherShipThenTheyFight [
 
-	| aGame ship1 ship2 |
+	| aGame |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 6 6 5 2 );
@@ -218,12 +216,10 @@ GameTest >> test015WhenShipIsMovedByAnEffectToACellWithAnotherShipThenTheyFight 
 		         build.
 	aGame playTurn. "ship 1: 1 + 6 = 7, el BlackHole lo lleva a 3"
 	aGame playTurn. "ship 2: 1 + 6 = 7, el BlackHole lo lleva a 3 donde esta ship 1: pelean 5 contra 2"
-	ship1 := aGame shipNamed: 'ship 1'.
-	ship2 := aGame shipNamed: 'ship 2'.
-	self assert: ship1 position equals: 1.
-	self assert: ship1 shields equals: 2.
-	self assert: ship2 position equals: 3.
-	self assert: ship2 shields equals: 3
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 3.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3
 ]
 
 { #category : 'tests' }
@@ -237,7 +233,7 @@ GameTest >> test016WhenShipIsMovedByAnEffectToAWormHoleThenItIsNotTransported [
 		         wormHoleBetween: 2 and: 4;
 		         build.
 	aGame playTurn. "ship 1: 1 + 7 = 8, el BlackHole lo lleva a 4 (wormhole), pero no lo transporta a 2"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 4
+	self assert: (aGame positionOf: 'ship 1') equals: 4
 ]
 
 { #category : 'tests' }
@@ -281,13 +277,13 @@ GameTest >> test018WhenShipReachesTheFinishThenItWinsEvenIfTheCellHasAnEffect [
 		         build.
 	aGame playTurn. "1 + 9 = 10: llega a la meta y no se aplica el BlackHole"
 	self assert: aGame winner equals: 'ship 1'.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 10
+	self assert: (aGame positionOf: 'ship 1') equals: 10
 ]
 
 { #category : 'tests' }
 GameTest >> test019WhenShipLosesAllItsShieldsThenItLosesTwoTurns [
 
-	| effects aGame ship1 ship2 |
+	| effects aGame |
 	effects := (1 to: 30) collect: [ :cell | NoEffect new ].
 	effects at: 2 put: HyperSpaceJump new.
 	effects at: 7 put: HyperSpaceJump new.
@@ -298,8 +294,6 @@ GameTest >> test019WhenShipLosesAllItsShieldsThenItLosesTwoTurns [
 		         effects: effects;
 		         wormHoleBetween: 29 and: 30;
 		         build.
-	ship1 := aGame shipNamed: 'ship 1'.
-	ship2 := aGame shipNamed: 'ship 2'.
 	aGame playTurn. "ship 1: cae en 2 (HyperSpaceJump) -> 6, le quedan 2 escudos"
 	aGame playTurn. "ship 2: cae en 21"
 	aGame playTurn. "ship 1: cae en 7 (HyperSpaceJump) -> 11, le queda 1 escudo"
@@ -308,11 +302,11 @@ GameTest >> test019WhenShipLosesAllItsShieldsThenItLosesTwoTurns [
 	aGame playTurn. "ship 2: 23"
 	aGame playTurn. "ship 1 pierde su 1er turno; juega ship 2: 24"
 	aGame playTurn. "ship 1 pierde su 2do turno; juega ship 2: 25"
-	self assert: ship1 position equals: 16.
-	self assert: ship1 shields equals: 3.
-	self assert: ship2 position equals: 25.
+	self assert: (aGame positionOf: 'ship 1') equals: 16.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 25.
 	aGame playTurn. "ship 1 vuelve a jugar"
-	self assert: ship1 position equals: 17
+	self assert: (aGame positionOf: 'ship 1') equals: 17
 ]
 
 { #category : 'tests' }

@@ -39,8 +39,8 @@ GameStateTest >> test009WhenGamePlaysOneTurnThenOnlyTheShipInTurnMoves [
 		         diceSequence: #( 5 );
 		         build.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 6.
-	self assert: (aGame shipNamed: 'ship 2') position equals: 1
+	self assert: (aGame positionOf: 'ship 1') equals: 6.
+	self assert: (aGame positionOf: 'ship 2') equals: 1
 ]
 
 { #category : 'tests' }

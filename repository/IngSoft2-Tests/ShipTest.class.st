@@ -142,7 +142,7 @@ ShipTest >> test010WhenShipRecoverItsShieldsThenShipShieldsAre3 [
 { #category : 'tests' }
 ShipTest >> test016WhenShipInTurnSkipsItsTurnThenItRecoversItsShieldsAndDoesNotMove [
 
-	| aGame ship1 ship2 |
+	| aGame  |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 5 2 );
@@ -150,16 +150,15 @@ ShipTest >> test016WhenShipInTurnSkipsItsTurnThenItRecoversItsShieldsAndDoesNotM
 		         wormHoleBetween: 9 and: 10;
 		         laps: 3;
 		         build.
-	ship1 := aGame shipNamed: 'ship 1'.
-	ship2 := aGame shipNamed: 'ship 2'.
+
 	aGame playTurn. "ship 1: cae en 6 (HyperSpaceJump) -> 10, le quedan 2 escudos"
 	aGame playTurn. "ship 2: cae en 3 (HyperSpaceJump) -> 7, le quedan 2 escudos"
 	aGame skipTurn. "le toca a ship 1: no tira y recupera sus escudos"
 	aGame playTurn. "le toca a ship 2: 7 + 5 = celda 2 de la vuelta 2 (HyperSpaceJump) -> 6"
-	self assert: ship1 shields equals: 3.
-	self assert: ship1 position equals: 10.
-	self assert: ship2 position equals: 6.
-	self assert: ship2 laps equals: 2
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 1') equals: 10.
+	self assert: (aGame positionOf: 'ship 2') equals: 6.
+	self assert: (aGame lapOf: 'ship 2') equals: 2
 ]
 
 { #category : 'tests' }
@@ -171,7 +170,7 @@ ShipTest >> test017WhenShipMovesMoreCellsThanCellsInBoardThenItActualPositionIs1
 		         laps: 3;
 		         build.
 	aGame playTurn. "1 + 10 = 11: da la vuelta y queda en 1"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 1
+	self assert: (aGame positionOf: 'ship 1') equals: 1
 ]
 
 { #category : 'tests' }
@@ -183,7 +182,7 @@ ShipTest >> test018WhenShipMovesToLastCellInLapThanCellsInBoardThenItIsInLastCel
 		         laps: 3;
 		         build.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 10
+	self assert: (aGame positionOf: 'ship 1') equals: 10
 ]
 
 { #category : 'tests' }
@@ -197,5 +196,5 @@ ShipTest >> test019WhenShipMovesByEffectAndItIsInEarlyCellsThenLapsStayZeroAndNo
 		         laps: 3;
 		         build.
 	aGame playTurn. "cae en 2, el BlackHole lo lleva a 1 sin perder la vuelta"
-	self assert: (aGame shipNamed: 'ship 1') laps equals: 1
+	self assert: (aGame lapOf: 'ship 1') equals: 1
 ]

@@ -75,7 +75,7 @@ BoardTest >> test005WhenShipMovesToWormholeThenBoardKnowsThePositionOfShip [
 		         wormHoleBetween: 4 and: 7;
 		         build.
 	aGame playTurn. "cae en 7 y el wormhole lo lleva a 4"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 4
+	self assert: (aGame positionOf: 'ship 1') equals: 4
 ]
 
 { #category : 'tests' }

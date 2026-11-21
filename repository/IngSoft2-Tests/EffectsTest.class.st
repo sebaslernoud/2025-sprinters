@@ -80,7 +80,7 @@ EffectsTest >> test006WhenApplyAtomicBombEffectThenAllShipsGoBackToTheFirstCell 
 { #category : 'tests' }
 EffectsTest >> test007WhenApplyAtomicBombEffectToShipThenAllShipPositionAreOneButLapsNotChange [
 
-	| aGame ship1 ship2 |
+	| aGame |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
 		         diceSequence: #( 12 );
@@ -89,12 +89,10 @@ EffectsTest >> test007WhenApplyAtomicBombEffectToShipThenAllShipPositionAreOneBu
 		         laps: 3;
 		         build.
 	aGame playTurn. "ship 1: 1 + 12 = 13 -> celda 3 de la vuelta 2 -> AtomicBomb"
-	ship1 := aGame shipNamed: 'ship 1'.
-	ship2 := aGame shipNamed: 'ship 2'.
-	self assert: ship1 position equals: 1.
-	self assert: ship1 laps equals: 2.
-	self assert: ship2 position equals: 1.
-	self assert: ship2 laps equals: 1
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame lapOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 1.
+	self assert: (aGame lapOf: 'ship 2') equals: 1
 ]
 
 { #category : 'tests' }
@@ -107,7 +105,7 @@ EffectsTest >> test008WhenApplyAtomicBombEffectToShipThenAllShipLoseOneShield [
 		         laps: 4;
 		         build.
 	aGame playTurn.
-	self assert: (aGame shipNamed: 'ship 1') shields equals: 2
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2
 ]
 
 { #category : 'tests' }
@@ -122,7 +120,7 @@ EffectsTest >> test009WhenCreatHuperJumpEffectToShipThenItMoveaParsec [
 						          (Distance parsecs: 3) });
 		         build.
 	aGame playTurn. "cae en 3, salta 8 parsecs = 4 celdas"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 7
+	self assert: (aGame positionOf: 'ship 1') equals: 7
 ]
 
 { #category : 'tests' }
@@ -140,8 +138,8 @@ EffectsTest >> test010WhenTwoShipsFallOnTheSameHyperJumpThenEachOneJumpsTheNextD
 		         build.
 	aGame playTurn. "ship 1: cae en 4, salta 8 parsecs = 4 celdas"
 	aGame playTurn. "ship 2: cae en 4, salta 6 parsecs = 3 celdas"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 8.
-	self assert: (aGame shipNamed: 'ship 2') position equals: 7
+	self assert: (aGame positionOf: 'ship 1') equals: 8.
+	self assert: (aGame positionOf: 'ship 2') equals: 7
 ]
 
 { #category : 'tests' }
@@ -194,7 +192,7 @@ EffectsTest >> test014WhenCreatHyperJumpWithParsecsrEffectToShipThenItMovesParse
 						          (Distance parsecs: 3) });
 		         build.
 	aGame playTurn. "cae en 3, salta 9 parsecs = 3 celdas"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 6
+	self assert: (aGame positionOf: 'ship 1') equals: 6
 ]
 
 { #category : 'tests' }
@@ -211,5 +209,5 @@ EffectsTest >> test015WhenCreatHyperJumpLightYearEffectToShipThenItMovesPrrsecs 
 						          (Distance lightYear: 9) });
 		         build.
 	aGame playTurn. "cae en 3, salta 27 años luz = 9 parsecs = 3 celdas"
-	self assert: (aGame shipNamed: 'ship 1') position equals: 6
+	self assert: (aGame positionOf: 'ship 1') equals: 6
 ]

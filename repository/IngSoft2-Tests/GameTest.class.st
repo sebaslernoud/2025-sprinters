@@ -49,11 +49,9 @@ GameTest >> test004When2ShipsPlayAndShipOneWonThenReturnPositions [
 	| aGame expectedPositions |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
-		         diceSequence: #( 5 );
+		         diceSequence: #( 4 5 9 );
 		         build.
-	aGame move: (aGame shipNamed: 'ship 1') by: 10.
-	aGame move: (aGame shipNamed: 'ship 2') by: 5.
-	aGame play.
+	aGame play. "ship 1 cae en 5, ship 2 en 6, ship 1 llega a la meta (5 + 9)"
 	expectedPositions := Dictionary new.
 	expectedPositions at: 'ship 1' put: 10.
 	expectedPositions at: 'ship 2' put: 6.
@@ -107,10 +105,9 @@ GameTest >> test008WhenGameHasPlayedThenShowRanking [
 	| aGame |
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
-		         diceSequence: #( 6 10 );
+		         diceSequence: #( 5 9 );
 		         build.
-	aGame move: (aGame shipNamed: 'ship 2') by: 10.
-	aGame play.
+	aGame play. "ship 1 cae en 6, ship 2 llega a la meta"
 	self
 		assert: aGame ranking
 		equals: (OrderedCollection withAll: #( 'ship 2' 'ship 1' ))

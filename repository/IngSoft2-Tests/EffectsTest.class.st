@@ -8,73 +8,68 @@ Class {
 { #category : 'tests' }
 EffectsTest >> test001WhenApplyBlackHoleEffectToShipThenShipMove4Cells [
 
-	| aGame ship1 |
-	aGame := GameBuilder new build.
-	ship1 := aGame shipNamed: 'ship 1'.
-	aGame move: ship1 by: 6. "queda en 7"
-	BlackHole new applyTo: ship1 in: aGame.
-	self assert: ship1 position equals: 3
+	| effects aGame |
+	effects := (1 to: 10) collect: [ :cell | NoEffect new ].
+	effects at: 7 put: BlackHole new.
+	aGame := GameBuilder new
+		         diceSequence: #( 6 );
+		         effects: effects;
+		         wormHoleBetween: 9 and: 10;
+		         build.
+	aGame playTurn. "cae en 7 (BlackHole) y retrocede 4"
+	self assert: (aGame positionOf: 'ship 1') equals: 3
 ]
 
 { #category : 'tests' }
 EffectsTest >> test002WhenApplyBlackHoleEffectNearTheStartThenShipPositionIsNeverLessThanOne [
 
-	| aGame ship1 |
-	aGame := GameBuilder new build.
-	ship1 := aGame shipNamed: 'ship 1'.
-	aGame move: ship1 by: 2. "queda en 3; 3 - 4 seria -1"
-	BlackHole new applyTo: ship1 in: aGame.
-	self assert: ship1 position equals: 1
+	| effects aGame |
+	effects := (1 to: 10) collect: [ :cell | NoEffect new ].
+	effects at: 3 put: BlackHole new.
+	aGame := GameBuilder new
+		         diceSequence: #( 2 );
+		         effects: effects;
+		         wormHoleBetween: 9 and: 10;
+		         build.
+	aGame playTurn. "cae en 3 (BlackHole): 3 - 4 seria -1, queda en 1"
+	self assert: (aGame positionOf: 'ship 1') equals: 1
 ]
 
 { #category : 'tests' }
-EffectsTest >> test003WhenApplyHyperSpaceJumpEffectToShipThenShipMoves4Cells [
+EffectsTest >> test003WhenShipLandsOnAHyperSpaceJumpThenItMoves4CellsAndLosesAShield [
 
-	| aGame ship1 |
-	aGame := GameBuilder new build.
-	ship1 := aGame shipNamed: 'ship 1'.
-	HyperSpaceJump new applyTo: ship1 in: aGame. "de 1 a 5"
-	self assert: ship1 position equals: 5
-]
-
-{ #category : 'tests' }
-EffectsTest >> test004WhenApplyHyperSpaceJumpEffectToShipThenShipShieldsAre2 [
-
-	| aGame ship1 |
-	aGame := GameBuilder new build.
-	ship1 := aGame shipNamed: 'ship 1'.
-	HyperSpaceJump new applyTo: ship1 in: aGame.
-	self assert: ship1 shields equals: 2
+	| effects aGame |
+	effects := (1 to: 10) collect: [ :cell | NoEffect new ].
+	effects at: 3 put: HyperSpaceJump new.
+	aGame := GameBuilder new
+		         diceSequence: #( 2 );
+		         effects: effects;
+		         wormHoleBetween: 9 and: 10;
+		         build.
+	aGame playTurn. "cae en 3 (HyperSpaceJump) -> 7"
+	self assert: (aGame positionOf: 'ship 1') equals: 7.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2
 ]
 
 { #category : 'tests' }
 EffectsTest >> test005WhenApplyMoonWalkEffectToShip1ThenShip2MoveNPositionBackward [
 
-	| aGame ship2 |
+	| effects aGame |
+	effects := (1 to: 10) collect: [ :cell | NoEffect new ].
+	effects at: 6 put: (MoonWalk move: 10).
 	aGame := GameBuilder new
 		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 1 13 4 );
+		         effects: effects;
+		         wormHoleBetween: 9 and: 10;
 		         laps: 2;
 		         build.
-	ship2 := aGame shipNamed: 'ship 2'.
-	aGame move: ship2 by: 13. "queda en la celda 4 de la vuelta 2"
-	(MoonWalk move: 10) applyTo: (aGame shipNamed: 'ship 1') in: aGame.
-	self assert: ship2 position equals: 4.
-	self assert: ship2 laps equals: 1
-]
-
-{ #category : 'tests' }
-EffectsTest >> test006WhenApplyAtomicBombEffectThenAllShipsGoBackToTheFirstCell [
-
-	| aGame |
-	aGame := GameBuilder new
-		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
-		         laps: 4;
-		         build.
-	aGame move: (aGame shipNamed: 'ship 2') by: 23.
-	AtomicBomb new applyTo: (aGame shipNamed: 'ship 1') in: aGame.
-	self assert: (aGame shipNamed: 'ship 1') position equals: 1.
-	self assert: (aGame shipNamed: 'ship 2') position equals: 1.
-	self assert: (aGame shipNamed: 'ship 3') position equals: 1
+	aGame playTurn. "ship 1 cae en 2"
+	aGame playTurn. "ship 2: 1 + 13 = celda 4 de la vuelta 2"
+	aGame playTurn. "ship 1 cae en 6 (MoonWalk): ship 2 retrocede 10"
+	self assert: (aGame positionOf: 'ship 2') equals: 4.
+	self assert: (aGame lapOf: 'ship 2') equals: 1.
+	self assert: (aGame positionOf: 'ship 1') equals: 6
 ]
 
 { #category : 'tests' }

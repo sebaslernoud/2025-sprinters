@@ -924,3 +924,152 @@ CardTest >> test045WhenAReversedWormHoleMovesShipsOnDifferentLapsThenEachOneKeep
 	self assert: (aGame positionOf: 'ship 2') equals: 12.
 	self assert: (aGame lapOf: 'ship 2') equals: 1
 ]
+
+{ #category : 'tests' }
+CardTest >> test046WhenTwoReversePolarityCardsAreOnTheSameCellThenTheEffectIsNormal [
+
+	| effects firstCard secondCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: BlackHole new.
+	firstCard := ReversePolarityCard new.
+	secondCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { firstCard. secondCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: firstCard targeting: 5.
+	aGame ship: 'ship 1' plays: secondCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5: las dos Reverse Polarity se anulan, el BlackHole la hace retroceder a ella"
+	self assert: (aGame positionOf: 'ship 3') equals: 1.
+	self assert: (aGame positionOf: 'ship 1') equals: 10.
+	self assert: (aGame positionOf: 'ship 2') equals: 7
+]
+
+{ #category : 'tests' }
+CardTest >> test047WhenOneOfTwoReversePolarityCardsOnTheSameCellIsCancelledThenTheCellIsReversedAgain [
+
+	| effects firstCard secondCard cancellationCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: BlackHole new.
+	firstCard := ReversePolarityCard new.
+	secondCard := ReversePolarityCard new.
+	cancellationCard := CancellationCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { firstCard. secondCard. cancellationCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: firstCard targeting: 5.
+	aGame ship: 'ship 1' plays: secondCard targeting: 5.
+	aGame ship: 'ship 2' plays: cancellationCard targeting: aGame activeCards first.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5: queda una sola Reverse Polarity, retroceden las demas"
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame positionOf: 'ship 1') equals: 6.
+	self assert: (aGame positionOf: 'ship 2') equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test048WhenRedoReplaysAReversePolarityOnTheSameCellThenTheEffectIsNormal [
+
+	| effects reversePolarityCard redoCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: BlackHole new.
+	reversePolarityCard := ReversePolarityCard new.
+	redoCard := RedoCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. redoCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame ship: 'ship 1' plays: redoCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5: el Redo agrego otra Reverse Polarity sobre la 5 y se anulan"
+	self assert: (aGame positionOf: 'ship 3') equals: 1.
+	self assert: (aGame positionOf: 'ship 1') equals: 10.
+	self assert: (aGame positionOf: 'ship 2') equals: 7
+]
+
+{ #category : 'tests' }
+CardTest >> test049WhenACellIsReversedThenAnotherCellWithTheSameEffectIsNotReversed [
+
+	| blackHole effects reversePolarityCard aGame |
+	blackHole := BlackHole new.
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: blackHole.
+	effects at: 7 put: blackHole.
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7 (BlackHole normal): retrocede ella, de 7 a 3"
+	aGame playTurn. "ship 3 cae en 5 (BlackHole invertido): retroceden las demas"
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame positionOf: 'ship 1') equals: 6.
+	self assert: (aGame positionOf: 'ship 2') equals: 1
+]
+
+{ #category : 'tests' }
+CardTest >> test050WhenOneEndOfTheWormHoleIsReversedThenTheOtherEndWorksNormally [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 1 11 3 );
+		         cells: 20;
+		         wormHoleBetween: 4 and: 12;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 4.
+	aGame playTurn. "ship 1 cae en 2"
+	aGame playTurn. "ship 2 cae en 12, la punta NO invertida: va ella a la 4"
+	self assert: (aGame positionOf: 'ship 2') equals: 4.
+	self assert: (aGame positionOf: 'ship 1') equals: 2.
+	aGame playTurn. "ship 3 cae en 4, la punta invertida: se queda, y las demas van a la 12"
+	self assert: (aGame positionOf: 'ship 3') equals: 4.
+	self assert: (aGame positionOf: 'ship 1') equals: 12.
+	self assert: (aGame positionOf: 'ship 2') equals: 12
+]
+
+{ #category : 'tests' }
+CardTest >> test051WhenAShipPlaysReversePolarityAfterItsTurnHasPassedThenRaiseError [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 3 );
+		         cells: 20;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 juega su turno: ahora le toca a ship 2"
+	self
+		should: [ aGame ship: 'ship 1' plays: reversePolarityCard targeting: 7 ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'Permanent cards can only be played during your turn' ].
+	self assert: (aGame cardsOf: 'ship 1') size equals: 2.
+	self assert: aGame activeCards isEmpty
+]

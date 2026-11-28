@@ -15,7 +15,7 @@ EffectManager >> apply: anEffect to: aShip in: aGame [
 	concreteEffect := anEffect effectFor: aShip.
 	lastApplication := EffectApplication
 		                   of: concreteEffect
-		                   within: concreteEffect scope.
+		                   within: (aGame scopeOf: concreteEffect landedAt: aShip position).
 	lastApplication applyLandedBy: aShip in: aGame
 ]
 

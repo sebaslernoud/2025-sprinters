@@ -649,3 +649,134 @@ CardTest >> test034WhenReversePolarityIsCancelledThenItIsNoLongerActive [
 	aGame ship: 'ship 2' plays: cancellationCard targeting: aGame activeCards first.
 	self assert: aGame activeCards isEmpty
 ]
+
+{ #category : 'tests' }
+CardTest >> test035WhenAShipLandsOnAReversedBlackHoleThenEveryOtherShipGoesBack [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: BlackHole new.
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5 (BlackHole invertido): retroceden 4 todas las demas"
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame positionOf: 'ship 1') equals: 6.
+	self assert: (aGame positionOf: 'ship 2') equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test036WhenAShipLandsOnAReversedHyperSpaceJumpThenEveryOtherShipMovesForwardAndLosesAShield [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: HyperSpaceJump new.
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5 (HyperSpaceJump invertido): las demas avanzan 4 y pierden un escudo"
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 3.
+	self assert: (aGame positionOf: 'ship 1') equals: 14.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 11.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 2
+]
+
+{ #category : 'tests' }
+CardTest >> test037WhenAShipLandsOnAReversedCardGiverThenEveryOtherShipReceivesACard [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: CardGiver new.
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5 (CardGiver invertido): ship 1 y ship 2 reciben una carta cada una"
+	self assert: (aGame cardsOf: 'ship 1') size equals: 2.
+	self assert: (aGame cardsOf: 'ship 2') size equals: 3.
+	self assert: (aGame cardsOf: 'ship 3') size equals: 2
+]
+
+{ #category : 'tests' }
+CardTest >> test038WhenAShipLandsOnAReversedHyperJumpThenEveryOtherShipJumpsTheSameDistance [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: (HyperJump with: {
+				 (Distance parsecs: 8).
+				 (Distance parsecs: 6) }).
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 9 6 4 11 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         laps: 2;
+		         length: (Distance parsecs: 40);
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 10"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn. "ship 3 cae en 5 (HyperJump invertido): las demas saltan 8 parsecs = 4 celdas"
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame positionOf: 'ship 1') equals: 14.
+	self assert: (aGame positionOf: 'ship 2') equals: 11.
+	aGame playTurn.
+	"ship 1: 14 + 11 = celda 5 de la vuelta 2: a las demas les toca la segunda distancia (6 parsecs = 3 celdas).
+	 Si la lista hubiera avanzado una vez por cada nave, volveria a tocar 8 parsecs"
+	self assert: (aGame positionOf: 'ship 2') equals: 14.
+	self assert: (aGame positionOf: 'ship 3') equals: 8
+]
+
+{ #category : 'tests' }
+CardTest >> test039WhenAReversedEffectBringsAShipToTheCellOfTheShipInTurnThenTheyDoNotFight [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: BlackHole new.
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 8 6 4 5 2 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 5.
+	aGame playTurn. "ship 1 cae en 9"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn.
+	"ship 3 cae en 5 (BlackHole invertido): ship 1 retrocede de 9 a 5, a la celda de ship 3.
+	 ship 3 se queda en la celda del efecto y ship 1 fue movida por el efecto: no pelean"
+	self assert: (aGame positionOf: 'ship 1') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 3
+]

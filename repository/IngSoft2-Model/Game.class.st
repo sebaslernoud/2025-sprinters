@@ -47,6 +47,12 @@ Game >> activeCards [
 	^ cardManager activeCards
 ]
 
+{ #category : 'effects' }
+Game >> allShips [
+
+	^ ships copy
+]
+
 { #category : 'battle' }
 Game >> areAllied: aShip with: anotherShip [
 
@@ -77,12 +83,6 @@ Game >> damage: aShip [
 
 	aShip loseShield.
 	aShip isDefenseless ifTrue: [ self penalize: aShip ]
-]
-
-{ #category : 'effects' }
-Game >> damageAllShips [
-
-	ships do: [ :ship | self damage: ship ]
 ]
 
 { #category : 'private' }
@@ -151,13 +151,6 @@ Game >> mercenariesOf: aShip [
 Game >> move: aShip by: anAmountOfCells [
 
 	board move: aShip by: anAmountOfCells
-]
-
-{ #category : 'effects' }
-Game >> moveAllShipsExcept: aShip by: anAmountOfCells [
-
-	(ships copyWithout: aShip) do: [ :ship |
-		board move: ship by: anAmountOfCells ]
 ]
 
 { #category : 'private' }
@@ -235,12 +228,6 @@ Game >> resolveShip: aShipName plays: aCard targeting: aTarget [
 Game >> rollFor: aShip [
 
 	^ bucketOfDices throw + (cardManager bonusFor: aShip)
-]
-
-{ #category : 'effects' }
-Game >> sendAllShipsToStart [
-
-	ships do: [ :ship | self sendToStart: ship ]
 ]
 
 { #category : 'effects' }

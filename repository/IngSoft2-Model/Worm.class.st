@@ -24,9 +24,9 @@ Worm class >> with: aX and: aY [
 ]
 
 { #category : 'playing' }
-Worm >> applyTo: aShip in: aGame [
+Worm >> affect: aShip in: aGame [
 
-	(self effectFor: aShip) applyTo: aShip in: aGame
+	(self effectFor: aShip) affect: aShip in: aGame
 ]
 
 { #category : 'applying' }

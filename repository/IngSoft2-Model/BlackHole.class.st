@@ -6,7 +6,7 @@ Class {
 }
 
 { #category : 'playing' }
-BlackHole >> applyTo: aShip in: aGame [
+BlackHole >> affect: aShip in: aGame [
 
 	aGame move: aShip by: -4
 ]

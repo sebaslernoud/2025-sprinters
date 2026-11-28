@@ -6,8 +6,14 @@ Class {
 }
 
 { #category : 'playing' }
-AtomicBomb >> applyTo: aShip in: aGame [
+AtomicBomb >> affect: aShip in: aGame [
 
-	aGame sendAllShipsToStart.
-	aGame damageAllShips
+	aGame sendToStart: aShip.
+	aGame damage: aShip
+]
+
+{ #category : 'applying' }
+AtomicBomb >> scope [
+
+	^ AllShipsScope new
 ]

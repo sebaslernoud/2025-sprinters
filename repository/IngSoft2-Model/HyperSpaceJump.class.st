@@ -6,7 +6,7 @@ Class {
 }
 
 { #category : 'playing' }
-HyperSpaceJump >> applyTo: aShip in: aGame [
+HyperSpaceJump >> affect: aShip in: aGame [
 
 	aGame move: aShip by: 4.
 	aGame damage: aShip

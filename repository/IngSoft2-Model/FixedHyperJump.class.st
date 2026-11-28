@@ -15,7 +15,7 @@ FixedHyperJump class >> of: aDistance [
 ]
 
 { #category : 'playing' }
-FixedHyperJump >> applyTo: aShip in: aGame [
+FixedHyperJump >> affect: aShip in: aGame [
 
 	aGame move: aShip by: (aGame cellsIn: distance)
 ]

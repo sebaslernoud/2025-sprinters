@@ -15,7 +15,7 @@ Teleport class >> to: aCell [
 ]
 
 { #category : 'playing' }
-Teleport >> applyTo: aShip in: aGame [
+Teleport >> affect: aShip in: aGame [
 
 	aGame teleport: aShip to: cell
 ]

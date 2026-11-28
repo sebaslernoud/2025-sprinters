@@ -533,3 +533,54 @@ CardTest >> test028WhenRepeatAfterAHyperJumpThenTheListOfDistancesDoesNotAdvance
 	 Si el Repeat hubiera avanzado la lista, saltaria 2 parsecs, quedaria en 7 y pelearia con ship 1"
 	self assert: (aGame positionOf: 'ship 2') equals: 10
 ]
+
+{ #category : 'tests' }
+CardTest >> test029WhenRepeatAfterAMoonWalkThenEveryShipExceptTheChosenOneGoesBack [
+
+	| effects repeatCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 4 put: (MoonWalk move: 1).
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 7 9 3 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 cae en 8"
+	aGame playTurn. "ship 2 cae en 10"
+	aGame playTurn. "ship 3 cae en 4 (MoonWalk de 1): ship 1 pasa a 7 y ship 2 a 9"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 1'.
+	"se repite el MoonWalk como si ship 1 hubiera caido en el: retroceden todas menos ella"
+	self assert: (aGame positionOf: 'ship 1') equals: 7.
+	self assert: (aGame positionOf: 'ship 2') equals: 8.
+	self assert: (aGame positionOf: 'ship 3') equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test030WhenRepeatAfterAnAtomicBombThenEveryShipIsAffected [
+
+	| effects repeatCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 4 put: AtomicBomb new.
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 22 3 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         laps: 2;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1: 1 + 22 = celda 3 de la vuelta 2"
+	aGame playTurn. "ship 2 cae en 4 (AtomicBomb): las dos van a la celda 1 de su vuelta y pierden un escudo"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
+	"se repite el AtomicBomb: afecta a todas, no solo a la elegida"
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame lapOf: 'ship 1') equals: 2.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 1.
+	self assert: (aGame positionOf: 'ship 2') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 1 .
+	self assert: (aGame lapOf: 'ship 2') equals: 1.
+]

@@ -6,7 +6,7 @@ Class {
 }
 
 { #category : 'playing' }
-CardGiver >> applyTo: aShip in: aGame [
+CardGiver >> affect: aShip in: aGame [
 
 	aGame giveCardTo: aShip
 ]

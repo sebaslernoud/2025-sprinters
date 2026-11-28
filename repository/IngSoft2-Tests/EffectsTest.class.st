@@ -206,3 +206,27 @@ EffectsTest >> test015WhenCreatHyperJumpLightYearEffectToShipThenItMovesPrrsecs 
 	aGame playTurn. "cae en 3, salta 27 años luz = 9 parsecs = 3 celdas"
 	self assert: (aGame positionOf: 'ship 1') equals: 6
 ]
+
+{ #category : 'tests' }
+EffectsTest >> test017WhenAShipLandsOnAnAtomicBombThenEveryShipGoesToTheStartAndTheLandingShipFightsThere [
+
+	| effects aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 4 put: AtomicBomb new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 8 3 5 4 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         build.
+	aGame playTurn. "ship 1 cae en 9"
+	aGame playTurn.
+	"ship 2 cae en 4 (AtomicBomb): las dos van a la celda 1 y pierden un escudo.
+	 ship 2 es la nave del turno y quedo en la celda 1 con ship 1, asi que pelean:
+	 5 contra 4. Pierde ship 1 y pierde otro escudo"
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 1.
+	self assert: (aGame positionOf: 'ship 2') equals: 1.
+	self assert: (aGame lapOf: 'ship 2') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 2
+]

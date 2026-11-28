@@ -26,9 +26,9 @@ HyperJump class >> with: distanceToMove [
 ]
 
 { #category : 'playing' }
-HyperJump >> applyTo: aShip in: aGame [
+HyperJump >> affect: aShip in: aGame [
 
-	(self effectFor: aShip) applyTo: aShip in: aGame
+	(self effectFor: aShip) affect: aShip in: aGame
 ]
 
 { #category : 'playing' }

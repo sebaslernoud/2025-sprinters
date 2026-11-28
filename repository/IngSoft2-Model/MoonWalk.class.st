@@ -18,13 +18,19 @@ MoonWalk class >> move: numberOfCells [
 ]
 
 { #category : 'playing' }
-MoonWalk >> applyTo: aShip in: aGame [
+MoonWalk >> affect: aShip in: aGame [
 
-	aGame moveAllShipsExcept: aShip by: numberOfCells negated
+	aGame move: aShip by: numberOfCells negated
 ]
 
 { #category : 'initialization' }
 MoonWalk >> initializeWith: cells [
 
 	numberOfCells := cells
+]
+
+{ #category : 'applying' }
+MoonWalk >> scope [
+
+	^ OtherShipsScope new
 ]

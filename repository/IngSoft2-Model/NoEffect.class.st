@@ -6,7 +6,13 @@ Class {
 }
 
 { #category : 'playing' }
-NoEffect >> applyTo: aShip in: aGame [
+NoEffect >> affect: aShip in: aGame [
 
 	^ self
+]
+
+{ #category : 'applying' }
+NoEffect >> scope [
+
+	^ NoShipsScope new
 ]

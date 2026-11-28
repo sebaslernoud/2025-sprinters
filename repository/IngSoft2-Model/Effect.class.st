@@ -6,7 +6,7 @@ Class {
 }
 
 { #category : 'playing' }
-Effect >> applyTo: aShip in: aGame [
+Effect >> affect: aShip in: aGame [
 	self subclassResponsibility .
 ]
 
@@ -14,4 +14,10 @@ Effect >> applyTo: aShip in: aGame [
 Effect >> effectFor: aShip [
 
 	^ self
+]
+
+{ #category : 'applying' }
+Effect >> scope [
+
+	^ LandingShipScope new
 ]

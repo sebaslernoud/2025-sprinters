@@ -855,3 +855,72 @@ CardTest >> test042WhenAShipLandsOnAReversedCellWithoutEffectThenNothingChangesA
 	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
 	self assert: (aGame positionOf: 'ship 2') equals: 6
 ]
+
+{ #category : 'tests' }
+CardTest >> test043WhenAShipLandsOnTheBackEndOfAReversedWormHoleThenEveryOtherShipGoesToTheFrontEnd [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 1 5 3 );
+		         cells: 20;
+		         wormHoleBetween: 4 and: 12;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 4.
+	aGame playTurn. "ship 1 cae en 2"
+	aGame playTurn. "ship 2 cae en 6"
+	aGame playTurn. "ship 3 cae en 4 (wormhole invertido): se queda; las demas van a la punta contraria, la 12"
+	self assert: (aGame positionOf: 'ship 3') equals: 4.
+	self assert: (aGame positionOf: 'ship 1') equals: 12.
+	self assert: (aGame positionOf: 'ship 2') equals: 12
+]
+
+{ #category : 'tests' }
+CardTest >> test044WhenAShipLandsOnTheFrontEndOfAReversedWormHoleThenEveryOtherShipGoesToTheBackEnd [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 1 5 11 5 2 );
+		         cells: 20;
+		         wormHoleBetween: 4 and: 12;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 12.
+	aGame playTurn. "ship 1 cae en 2"
+	aGame playTurn. "ship 2 cae en 6"
+	aGame playTurn.
+	"ship 3 cae en 12 (wormhole invertido): se queda; las demas van a la punta contraria, la 4.
+	 Quedan juntas, pero fueron movidas por el efecto: no pelean"
+	self assert: (aGame positionOf: 'ship 3') equals: 12.
+	self assert: (aGame positionOf: 'ship 1') equals: 4.
+	self assert: (aGame positionOf: 'ship 2') equals: 4.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test045WhenAReversedWormHoleMovesShipsOnDifferentLapsThenEachOneKeepsItsLap [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 21 5 3 );
+		         cells: 20;
+		         wormHoleBetween: 4 and: 12;
+		         laps: 2;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 4.
+	aGame playTurn. "ship 1: 1 + 21 = celda 2 de la vuelta 2"
+	aGame playTurn. "ship 2 cae en 6"
+	aGame playTurn. "ship 3 cae en 4 (wormhole invertido): las demas van a la celda 12 de su propia vuelta"
+	self assert: (aGame positionOf: 'ship 1') equals: 12.
+	self assert: (aGame lapOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 12.
+	self assert: (aGame lapOf: 'ship 2') equals: 1
+]

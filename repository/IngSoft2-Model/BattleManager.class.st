@@ -40,6 +40,13 @@ BattleManager >> fightBetween: shipA and: shipB in: aGame [
 BattleManager >> resolveBattlesOf: aShip in: aGame [
 
 	((aGame shipsAt: aShip location) copyWithout: aShip) do: [ :enemy |
-		(aGame areAllied: aShip with: enemy) ifFalse: [
+		(self shouldFight: aShip with: enemy in: aGame) ifTrue: [
 			self fightBetween: aShip and: enemy in: aGame ] ]
+]
+
+{ #category : 'private' }
+BattleManager >> shouldFight: aShip with: anEnemy in: aGame [
+
+	^ aShip location = anEnemy location and: [
+		  (aGame areAllied: aShip with: anEnemy) not ]
 ]

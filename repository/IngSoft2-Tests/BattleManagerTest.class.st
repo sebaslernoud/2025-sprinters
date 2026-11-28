@@ -69,3 +69,33 @@ BattleManagerTest >> test003WhenTheArrivingShipWinsItsFirstBattleThenItKeepsFigh
 	self assert: (aGame positionOf: 'ship 2') equals: 1.
 	self assert: (aGame shieldsOf: 'ship 2') equals: 1
 ]
+
+{ #category : 'tests' }
+BattleManagerTest >> test004WhenAShipArrivesAtACellWithManyShipsAndLosesEveryBattleThenItEndsWithTwoShieldsAndLosesTwoTurns [
+
+	| effects aGame |
+	effects := (1 to: 50) collect: [ :cell | NoEffect new ].
+	effects at: 3 put: BlackHole new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' 'ship 4' 'ship 5' );
+		         diceSequence:
+			         #( 2 1 2 1 2 1 2 1 2 3 5 9 13 3 5 9 13 3 5 9 13 6 );
+		         effects: effects;
+		         wormHoleBetween: 48 and: 49;
+		         build.
+	aGame playTurn.
+	"ship 1 cae en 3 (BlackHole) y vuelve a la celda 1, donde estan las otras 4 naves.
+	 Pelea con cada una (1 contra 2) y pierde las 4, sin salir de la celda 1:
+	 3 -> 2 -> 1 -> 0 escudos (pierde 2 turnos y se le restauran a 3) -> 2"
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame shieldsOf: 'ship 5') equals: 3.
+	12 timesRepeat: [ aGame playTurn ].
+	"Las otras naves juegan 3 rondas sin chocarse (ship 2 avanza de a 3, ship 3 de a 5,
+	 ship 4 de a 9 y ship 5 de a 13). ship 1 pierde sus 2 turnos y no se mueve"
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame positionOf: 'ship 2') equals: 10.
+	aGame playTurn. "cumplido el castigo, ship 1 vuelve a jugar: 1 + 6 = 7"
+	self assert: (aGame positionOf: 'ship 1') equals: 7.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2
+]

@@ -780,3 +780,78 @@ CardTest >> test039WhenAReversedEffectBringsAShipToTheCellOfTheShipInTurnThenThe
 	self assert: (aGame shieldsOf: 'ship 3') equals: 3.
 	self assert: (aGame positionOf: 'ship 2') equals: 3
 ]
+
+{ #category : 'tests' }
+CardTest >> test040WhenAShipLandsOnAReversedMoonWalkThenOnlyThatShipGoesBackAndFightsWhereItLands [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 8 put: (MoonWalk move: 3).
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 4 6 7 6 2 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 8.
+	aGame playTurn. "ship 1 cae en 5"
+	aGame playTurn. "ship 2 cae en 7"
+	aGame playTurn.
+	"ship 3 cae en 8 (MoonWalk de 3 invertido): solo ella retrocede, de 8 a 5, donde esta ship 1.
+	 Fue desplazada por el efecto, asi que pelea: 6 contra 2, y gana"
+	self assert: (aGame positionOf: 'ship 3') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 3.
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 7
+]
+
+{ #category : 'tests' }
+CardTest >> test041WhenAShipLandsOnAReversedAtomicBombThenNothingHappensAndItDoesNotFight [
+
+	| effects reversePolarityCard aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 8 put: AtomicBomb new.
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' 'ship 3' );
+		         diceSequence: #( 4 7 7 5 2 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 8.
+	aGame playTurn. "ship 1 cae en 5"
+	aGame playTurn. "ship 2 cae en 8 (AtomicBomb invertido): no le pasa nada a nadie"
+	aGame playTurn.
+	"ship 3 tambien cae en 8, donde esta ship 2: no le pasa nada a nadie,
+	 y como se queda en la celda del efecto, no pelea"
+	self assert: (aGame positionOf: 'ship 1') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 8.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3.
+	self assert: (aGame positionOf: 'ship 3') equals: 8.
+	self assert: (aGame shieldsOf: 'ship 3') equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test042WhenAShipLandsOnAReversedCellWithoutEffectThenNothingChangesAndItFightsAsUsual [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 5 5 6 1 );
+		         cells: 20;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 6.
+	aGame playTurn. "ship 1 cae en 6 (vacia, invertida)"
+	aGame playTurn. "ship 2 cae en 6, donde esta ship 1: invertir una celda vacia no cambia nada, pelean 6 contra 1"
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 6
+]

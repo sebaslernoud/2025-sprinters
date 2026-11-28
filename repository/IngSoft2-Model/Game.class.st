@@ -236,9 +236,9 @@ Game >> rollFor: aShip [
 { #category : 'effects' }
 Game >> scopeOf: anEffect landedAt: aCell [
 
-	^ (cardManager isReversed: aCell)
-		  ifTrue: [ anEffect scope reversed ]
-		  ifFalse: [ anEffect scope ]
+	^ (cardManager isReversed: aCell )
+		ifTrue: [ anEffect scope reversed ]
+		ifFalse: [ anEffect  scope]
 ]
 
 { #category : 'effects' }

@@ -11,6 +11,12 @@ NoEffect >> affect: aShip in: aGame [
 	^ self
 ]
 
+{ #category : 'test' }
+NoEffect >> allowsBattlesOnItsCell [
+
+	^ true
+]
+
 { #category : 'applying' }
 NoEffect >> scope [
 

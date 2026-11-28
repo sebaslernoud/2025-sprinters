@@ -10,6 +10,12 @@ Effect >> affect: aShip in: aGame [
 	self subclassResponsibility .
 ]
 
+{ #category : 'test' }
+Effect >> allowsBattlesOnItsCell [
+
+	^ false
+]
+
 { #category : 'applying' }
 Effect >> effectFor: aShip [
 

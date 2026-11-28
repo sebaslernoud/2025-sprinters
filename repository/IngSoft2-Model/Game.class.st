@@ -169,15 +169,18 @@ Game >> play [
 { #category : 'private' }
 Game >> playNextTurn [
 
-	| currentShip |
+	| currentShip landingLocation landingEffect |
 	currentShip := turnManager nextShip.
 	board move: currentShip by: (self rollFor: currentShip).
 	(currentShip winAt: board) ifTrue: [ ^ self finish ].
-	effectManager
-		apply: (board effectOnPosition: currentShip position)
-		to: currentShip
-		in: self.
-	battleManager resolveBattlesOf: currentShip in: self.
+	landingLocation := currentShip location.
+	landingEffect := board effectOnPosition: currentShip position.
+	effectManager apply: landingEffect to: currentShip in: self.
+	(self
+		 shouldFightAfter: landingEffect
+		 movedFrom: landingLocation
+		 to: currentShip location) ifTrue: [
+		battleManager resolveBattlesOf: currentShip in: self ].
 	self finishIfSomeShipWon
 ]
 
@@ -272,6 +275,12 @@ Game >> shipsAt: aLocation [
 Game >> shipsSortedByPosition [
 
 	^ ships copy sort: [ :a :b | a isAheadOf: b ]
+]
+
+{ #category : 'private' }
+Game >> shouldFightAfter: anEffect movedFrom: aLocation to: anotherLocation [
+
+	^ anEffect allowsBattlesOnItsCell or: [ aLocation ~= anotherLocation ]
 ]
 
 { #category : 'private' }

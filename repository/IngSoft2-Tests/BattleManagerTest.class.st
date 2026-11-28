@@ -99,3 +99,63 @@ BattleManagerTest >> test004WhenAShipArrivesAtACellWithManyShipsAndLosesEveryBat
 	self assert: (aGame positionOf: 'ship 1') equals: 7.
 	self assert: (aGame shieldsOf: 'ship 1') equals: 2
 ]
+
+{ #category : 'tests' }
+BattleManagerTest >> test005WhenAShipLandsOnACardGiverWhereThereIsAnotherShipThenTheyDoNotFight [
+
+	| effects aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: CardGiver new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 4 4 6 1 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         deck: { SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 cae en 5 (CardGiver)"
+	aGame playTurn. "ship 2 cae en 5 (CardGiver), donde esta ship 1: se queda en la celda del efecto, no pelean"
+	self assert: (aGame positionOf: 'ship 1') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3
+]
+
+{ #category : 'tests' }
+BattleManagerTest >> test006WhenAMoonWalkMovesAnotherShipIntoTheCellOfTheShipInTurnThenTheyDoNotFight [
+
+	| effects aGame |
+	effects := (1 to: 20) collect: [ :cell | NoEffect new ].
+	effects at: 5 put: (MoonWalk move: 2).
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 6 4 6 1 );
+		         effects: effects;
+		         wormHoleBetween: 19 and: 20;
+		         build.
+	aGame playTurn. "ship 1 cae en 7"
+	aGame playTurn.
+	"ship 2 cae en 5 (MoonWalk de 2): ship 1 retrocede de 7 a 5, a la celda de ship 2.
+	 ship 2 no fue desplazada y ship 1 fue movida por el efecto: no pelean"
+	self assert: (aGame positionOf: 'ship 1') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 3.
+	self assert: (aGame positionOf: 'ship 2') equals: 5.
+	self assert: (aGame shieldsOf: 'ship 2') equals: 3
+]
+
+{ #category : 'tests' }
+BattleManagerTest >> test007WhenAShipLandsOnACellWithoutEffectWhereThereIsAnotherShipThenTheyFight [
+
+	| aGame |
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 4 4 6 1 );
+		         wormHoleBetween: 19 and: 20;
+		         cells: 20;
+		         build.
+	aGame playTurn. "ship 1 cae en 5"
+	aGame playTurn. "ship 2 cae en 5, sin efecto: pelean 6 contra 1"
+	self assert: (aGame positionOf: 'ship 1') equals: 1.
+	self assert: (aGame shieldsOf: 'ship 1') equals: 2.
+	self assert: (aGame positionOf: 'ship 2') equals: 5
+]

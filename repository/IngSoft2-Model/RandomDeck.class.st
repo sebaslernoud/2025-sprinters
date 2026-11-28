@@ -8,6 +8,6 @@ Class {
 { #category : 'drawing' }
 RandomDeck >> draw [
 
-	^ { SpeedCard. AccelerationCard. MercenaryCard. CancellationCard. RedoCard. RepeatCard }
+	^ { SpeedCard. AccelerationCard. MercenaryCard. CancellationCard. RedoCard. RepeatCard. ReversePolarityCard }
 		  atRandom new
 ]

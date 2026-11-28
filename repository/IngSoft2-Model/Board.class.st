@@ -44,6 +44,12 @@ Board >> effectOnPosition: position [
 	^ (cells at: position) effect
 ]
 
+{ #category : 'testing' }
+Board >> hasCell: aCell [
+
+	^ aCell between: 1 and: amountOfCells
+]
+
 { #category : 'accessing' }
 Board >> indexOf: aLocation [
 

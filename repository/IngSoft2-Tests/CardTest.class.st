@@ -584,3 +584,68 @@ CardTest >> test030WhenRepeatAfterAnAtomicBombThenEveryShipIsAffected [
 	self assert: (aGame shieldsOf: 'ship 2') equals: 1 .
 	self assert: (aGame lapOf: 'ship 2') equals: 1.
 ]
+
+{ #category : 'tests' }
+CardTest >> test031WhenShipPlaysReversePolarityOnACellThenItBecomesAnActiveCard [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         deck: { reversePolarityCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 7.
+	self assert: aGame activeCards size equals: 1.
+	self assert: (aGame cardsOf: 'ship 1') size equals: 1
+]
+
+{ #category : 'tests' }
+CardTest >> test032WhenReversePolarityTargetsACellOutsideTheBoardThenRaiseError [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         deck: { reversePolarityCard. SpeedCard new };
+		         build.
+	self
+		should: [ aGame ship: 'ship 1' plays: reversePolarityCard targeting: 11 ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'There is no cell number 11 on the board' ].
+	self assert: (aGame cardsOf: 'ship 1') size equals: 2
+]
+
+{ #category : 'tests' }
+CardTest >> test033WhenShipPlaysReversePolarityOutOfItsTurnThenRaiseError [
+
+	| reversePolarityCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         deck: { SpeedCard new. SpeedCard new. reversePolarityCard. SpeedCard new };
+		         build.
+	self
+		should: [ aGame ship: 'ship 2' plays: reversePolarityCard targeting: 7 ]
+		raise: Error
+		withExceptionDo: [ :error |
+			self
+				assert: error messageText
+				equals: 'Permanent cards can only be played during your turn' ]
+]
+
+{ #category : 'tests' }
+CardTest >> test034WhenReversePolarityIsCancelledThenItIsNoLongerActive [
+
+	| reversePolarityCard cancellationCard aGame |
+	reversePolarityCard := ReversePolarityCard new.
+	cancellationCard := CancellationCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         deck: { reversePolarityCard. SpeedCard new. cancellationCard. SpeedCard new };
+		         build.
+	aGame ship: 'ship 1' plays: reversePolarityCard targeting: 7.
+	aGame ship: 'ship 2' plays: cancellationCard targeting: aGame activeCards first.
+	self assert: aGame activeCards isEmpty
+]

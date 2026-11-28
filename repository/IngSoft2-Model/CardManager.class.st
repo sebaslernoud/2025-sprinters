@@ -81,6 +81,12 @@ CardManager >> isHired: aShip [
 	^ activeCards anySatisfy: [ :activeCard | activeCard hasHired: aShip ]
 ]
 
+{ #category : 'quer' }
+CardManager >> isReversed: aCell [
+
+	^ (activeCards count: [ :activeCard | activeCard reversesCell: aCell ]) odd
+]
+
 { #category : 'playing' }
 CardManager >> lastPlayedCard [
 

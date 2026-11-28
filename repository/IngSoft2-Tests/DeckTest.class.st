@@ -17,7 +17,7 @@ DeckTest >> test001WhenDrawingManyCardsFromARandomDeckThenAllKindsOfCardsAppear 
 	| deck drawnKinds |
 	deck := RandomDeck new.
 	drawnKinds := ((1 to: 600) collect: [ :each | deck draw class ]) asSet.
-	self assert: drawnKinds size equals: 6
+		self assert: drawnKinds size equals: 7
 ]
 
 { #category : 'tests' }

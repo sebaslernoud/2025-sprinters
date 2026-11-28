@@ -22,3 +22,9 @@ ActiveCard >> mercenariesOf: aShip [
 
 	^ #(  )
 ]
+
+{ #category : 'querying' }
+ActiveCard >> reversesCell: aCell [
+
+	^ false
+]

@@ -300,6 +300,14 @@ Game >> topShipNames [
 ]
 
 { #category : 'card rules' }
+Game >> validateCellExists: aCell [
+
+	(board hasCell: aCell) ifFalse: [
+		^ Error signal:
+			  ('There is no cell number {1} on the board' format: { aCell }) ]
+]
+
+{ #category : 'card rules' }
 Game >> validateIsAvailableAsMercenary: aShip [
 
 	(cardManager isHired: aShip) ifTrue: [

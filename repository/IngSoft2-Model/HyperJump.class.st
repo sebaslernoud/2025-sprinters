@@ -28,7 +28,13 @@ HyperJump class >> with: distanceToMove [
 { #category : 'playing' }
 HyperJump >> applyTo: aShip in: aGame [
 
-	aGame move: aShip by: (aGame cellsIn: self nextDistance)
+	(self effectFor: aShip) applyTo: aShip in: aGame
+]
+
+{ #category : 'playing' }
+HyperJump >> effectFor: aShip [
+
+	^ FixedHyperJump of: self nextDistance
 ]
 
 { #category : 'initialization' }

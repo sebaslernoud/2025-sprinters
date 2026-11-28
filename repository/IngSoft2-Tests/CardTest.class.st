@@ -453,3 +453,83 @@ CardTest >> test024WhenTheLastEffectWasACardGiverAfterABlackHoleThenRepeatApplie
 	self assert: (aGame positionOf: 'ship 1') equals: 3.
 	self assert: (aGame cardsOf: 'ship 1') size equals: 2
 ]
+
+{ #category : 'tests' }
+CardTest >> test025WhenRepeatAfterAWormHoleThenTheChosenShipGoesToTheSameExit [
+
+	| repeatCard aGame |
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 2 );
+		         wormHoleBetween: 3 and: 7;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 cae en 3 (wormhole) y sale por 7"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
+	"ship 2 esta en 1: va a la misma salida (7), no a la primera punta (3)"
+	self assert: (aGame positionOf: 'ship 2') equals: 7.
+	self assert: (aGame lapOf: 'ship 2') equals: 1
+]
+
+{ #category : 'tests' }
+CardTest >> test026WhenRepeatAfterAWormHoleUsedFromTheOtherEndThenTheChosenShipGoesToThatExit [
+
+	| repeatCard aGame |
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 6 );
+		         wormHoleBetween: 3 and: 7;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 cae en 7 (wormhole) y sale por 3"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
+	self assert: (aGame positionOf: 'ship 2') equals: 3
+]
+
+{ #category : 'tests' }
+CardTest >> test027WhenRepeatAfterAHyperJumpThenTheChosenShipJumpsTheSameDistance [
+
+	| repeatCard aGame |
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 2 2 );
+		         allCellsWith: (HyperJump with: {
+						          (Distance parsecs: 8).
+						          (Distance parsecs: 6).
+						          (Distance parsecs: 2) });
+		         wormHoleBetween: 9 and: 10;
+		         laps: 2;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 cae en 3, salta 8 parsecs = 4 celdas -> 7"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'.
+	"ship 2 salta los mismos 8 parsecs: de 1 a 5"
+	self assert: (aGame positionOf: 'ship 2') equals: 5
+]
+
+{ #category : 'tests' }
+CardTest >> test028WhenRepeatAfterAHyperJumpThenTheListOfDistancesDoesNotAdvance [
+
+	| repeatCard aGame |
+	repeatCard := RepeatCard new.
+	aGame := GameBuilder new
+		         shipsNamed: #( 'ship 1' 'ship 2' );
+		         diceSequence: #( 2 2 5 1 );
+		         allCellsWith: (HyperJump with: {
+						          (Distance parsecs: 8).
+						          (Distance parsecs: 6).
+						          (Distance parsecs: 2) });
+		         wormHoleBetween: 9 and: 10;
+		         laps: 2;
+		         deck: { repeatCard. SpeedCard new. SpeedCard new. SpeedCard new };
+		         build.
+	aGame playTurn. "ship 1 cae en 3, salta 8 parsecs -> 7"
+	aGame ship: 'ship 1' plays: repeatCard targeting: 'ship 2'. "ship 2: de 1 a 5"
+	aGame playTurn.
+	"ship 2 cae en 7: le toca la segunda distancia (6 parsecs = 3 celdas) -> 10.
+	 Si el Repeat hubiera avanzado la lista, saltaria 2 parsecs, quedaria en 7 y pelearia con ship 1"
+	self assert: (aGame positionOf: 'ship 2') equals: 10
+]

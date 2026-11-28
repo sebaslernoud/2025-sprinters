@@ -11,8 +11,8 @@ Class {
 { #category : 'applying' }
 EffectManager >> apply: anEffect to: aShip in: aGame [
 
-	anEffect applyTo: aShip in: aGame.
-	lastEffect := anEffect
+	lastEffect := anEffect effectFor: aShip.
+	lastEffect applyTo: aShip in: aGame
 ]
 
 { #category : 'initialization' }

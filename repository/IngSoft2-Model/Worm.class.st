@@ -26,7 +26,13 @@ Worm class >> with: aX and: aY [
 { #category : 'playing' }
 Worm >> applyTo: aShip in: aGame [
 
-	aGame teleport: aShip to: (self otherEndOf: aShip position)
+	(self effectFor: aShip) applyTo: aShip in: aGame
+]
+
+{ #category : 'applying' }
+Worm >> effectFor: aShip [
+
+	^ Teleport to: (self otherEndOf: aShip position)
 ]
 
 { #category : 'initialization' }

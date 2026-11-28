@@ -9,3 +9,9 @@ Class {
 Effect >> applyTo: aShip in: aGame [
 	self subclassResponsibility .
 ]
+
+{ #category : 'applying' }
+Effect >> effectFor: aShip [
+
+	^ self
+]
